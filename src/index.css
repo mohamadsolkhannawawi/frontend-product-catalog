@@ -1,0 +1,86 @@
+/* Import Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap");
+
+/* Tailwind Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Base Styles */
+@layer base {
+    body {
+        @apply font-sans text-brand-black bg-white antialiased;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-bold text-brand-black;
+    }
+
+    p {
+        @apply text-brand-gray-500;
+    }
+}
+
+/* Custom Component Styles */
+@layer components {
+    /* Button Styles */
+    .btn-primary {
+        @apply bg-brand-black text-white px-6 py-3 rounded-udemy font-medium hover:opacity-90 transition-opacity;
+    }
+
+    .btn-secondary {
+        @apply bg-transparent border border-brand-black text-brand-black px-6 py-3 rounded-udemy font-medium hover:bg-brand-black hover:text-white transition-colors;
+    }
+
+    .btn-ghost {
+        @apply text-brand-purple hover:underline font-medium;
+    }
+
+    /* Input Styles */
+    .input-field {
+        @apply w-full h-12 px-4 border border-brand-gray-200 rounded-udemy focus:outline-none focus:border-brand-purple focus:border-2 transition-colors;
+    }
+
+    /* Card Styles */
+    .card {
+        @apply bg-white rounded-udemy shadow-card p-4 hover:shadow-floating transition-shadow;
+    }
+}
+
+/* Custom Utilities */
+@layer utilities {
+    .text-ellipsis-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .text-ellipsis-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+}
+
+/* Skeleton Loader Animation */
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #f7f9fa 25%, #e5e7eb 50%, #f7f9fa 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+}
