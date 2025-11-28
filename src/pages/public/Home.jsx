@@ -6,6 +6,16 @@ import api from "@/lib/axios";
 import { API_ENDPOINTS } from "@/lib/constants";
 import Loader from "@/components/common/Loader";
 
+// ICONS
+import {
+    Laptop,
+    Shirt,
+    UtensilsCrossed,
+    House,
+    Heart,
+    Gamepad2,
+} from "lucide-react";
+
 export default function Home() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -26,45 +36,85 @@ export default function Home() {
         return () => (mounted = false);
     }, []);
 
+    const categories = [
+        { icon: Laptop, label: "Elektronik" },
+        { icon: Shirt, label: "Pakaian" },
+        { icon: UtensilsCrossed, label: "Makanan" },
+        { icon: House, label: "Rumah Tangga" },
+        { icon: Heart, label: "Kesehatan" },
+        { icon: Gamepad2, label: "Hobi" },
+    ];
+
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col bg-[#F7F7FB]">
             <Navbar />
-            <main className="max-w-6xl mx-auto px-4 py-8 flex-1">
-                <section className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+
+            {/* HERO SECTION */}
+            <main className="max-w-7xl mx-auto px-6 pt-16 pb-20 flex-1">
+                <section className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
                     <div>
-                        <h1 className="text-3xl font-bold text-brand-black">
-                            Platform Katalog Edukatif
+                        <h1 className="text-5xl font-bold text-brand-black leading-tight">
+                            Platform Katalog<br />Edukatif
                         </h1>
-                        <p className="mt-3 text-brand-gray-500">
-                            Desain profesional bergaya Udemy, cari produk
-                            terbaik dari toko lokal.
+
+                        <p className="mt-6 text-lg text-brand-gray-600 leading-relaxed max-w-xl">
+                            Desain profesional, cari produk terbaik dari toko lokal
+                            Indonesia dengan mudah dan terpercaya.
                         </p>
-                        <div className="mt-6">
-                            <a href="/catalog" className="btn-primary">
-                                Jelajahi Produk
-                            </a>
-                        </div>
+
+                        <a
+                            href="/catalog"
+                            className="inline-block mt-8 bg-brand-purple text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-purple-600 transition"
+                        >
+                            Jelajahi Produk
+                        </a>
                     </div>
-                    <div>
+
+                    <div className="flex justify-center">
                         <img
                             src="/src/assets/images/broken-photo.png"
                             alt="Hero"
-                            className="w-full rounded-md shadow-floating"
+                            className="w-full max-w-xl rounded-lg"
                         />
                     </div>
                 </section>
 
-                <section className="mt-10">
-                    <h2 className="text-lg font-semibold">Produk Unggulan</h2>
-                    <div className="mt-4">
-                        {loading ? (
-                            <Loader />
-                        ) : (
-                            <ProductGrid products={products} />
-                        )}
+                {/* CATEGORY SECTION */}
+                <section className="mt-24">
+                    <h2 className="text-3xl font-bold text-center mb-12">Kategori Produk</h2>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
+                        {categories.map((item, idx) => (
+                            <div
+                                key={idx}
+                                className="bg-white rounded-xl py-8 shadow-sm border border-gray-100 flex flex-col items-center hover:shadow-md transition"
+                            >
+                                <item.icon size={40} className="text-brand-purple" />
+                                <p className="mt-3 text-brand-black font-medium text-base">
+                                    {item.label}
+                                </p>
+                            </div>
+                        ))}
                     </div>
                 </section>
+
+                {/* FEATURED PRODUCTS */}
+                <section className="mt-24">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-3xl font-bold">Produk Unggulan</h2>
+                        <a href="/catalog" className="text-brand-purple font-medium hover:underline">
+                            Lihat Semua
+                        </a>
+                    </div>
+
+                    {loading ? (
+                        <Loader />
+                    ) : (
+                        <ProductGrid products={products} />
+                    )}
+                </section>
             </main>
+
             <Footer />
         </div>
     );
