@@ -4,7 +4,7 @@ import Input from "@/components/common/Input";
 import { useState } from "react";
 
 const Navbar = () => {
-    const isLoggedIn = false; // Replace with actual auth state
+    const isLoggedIn = false; // replace with actual auth
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -12,35 +12,34 @@ const Navbar = () => {
         if (e.type === "click" || (e.type === "keydown" && e.key === "Enter")) {
             e.preventDefault();
             if (searchQuery.trim()) {
-                navigate(
-                    `/catalog?q=${encodeURIComponent(searchQuery.trim())}`
-                );
+                navigate(`/catalog?q=${encodeURIComponent(searchQuery.trim())}`);
             }
         }
     };
 
     return (
-        <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
+        <nav className="sticky top-0 z-50 bg-white border-b border-gray-200/70">
             <div className="max-w-7xl mx-auto px-6">
-                <div className="flex items-center justify-between h-16">
-                    {/* Logo */}
+                <div className="flex items-center justify-between h-14">
+                    
+                    {/* LOGO */}
                     <Link to="/" className="flex items-center gap-2">
-                        <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-500 bg-clip-text text-transparent">
+                        <span className="text-[26px] font-extrabold tracking-tight bg-gradient-to-r from-purple-700 to-purple-500 bg-clip-text text-transparent">
                             Catalozy
                         </span>
                     </Link>
 
-                    {/* Search Bar */}
-                    <div className="flex-1 max-w-2xl mx-8">
+                    {/* SEARCH BAR (CENTER) */}
+                    <div className="flex-1 max-w-2xl mx-10">
                         <div className="relative">
                             <Search
-                                className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 cursor-pointer hover:text-gray-600"
+                                className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 hover:text-gray-600 transition cursor-pointer"
                                 onClick={handleSearch}
                             />
                             <Input
                                 type="text"
-                                placeholder="Apa yang Anda cari hari ini?"
-                                className="w-full pl-12 pr-4 rounded-full border border-gray-300"
+                                placeholder="Cari produk terbaik hari ini..."
+                                className="w-full h-12 pl-14 pr-4 rounded-full border border-gray-300 text-gray-700 placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onKeyDown={handleSearch}
@@ -48,11 +47,11 @@ const Navbar = () => {
                         </div>
                     </div>
 
-                    {/* Right Menu (only essentials) */}
-                    <div className="flex items-center gap-3">
+                    {/* MENU KANAN */}
+                    <div className="flex items-center gap-4">
                         {isLoggedIn ? (
                             <>
-                                <button className="p-2 hover:bg-gray-100 rounded-lg transition">
+                                <button className="p-2 hover:bg-gray-100 rounded-sm transition">
                                     <User className="h-5 w-5 text-gray-600" />
                                 </button>
                             </>
@@ -60,13 +59,14 @@ const Navbar = () => {
                             <>
                                 <Link
                                     to="/login"
-                                    className="btn-ghost px-4 py-2 rounded-sm text-sm"
+                                    className="text-gray-600 text-sm font-medium hover:text-gray-800"
                                 >
                                     Masuk
                                 </Link>
+
                                 <Link
                                     to="/register"
-                                    className="btn-secondary px-4 py-2 rounded-sm text-sm"
+                                    className="px-5 py-2 rounded-sm bg-purple-600 text-white text-sm font-medium hover:bg-purple-700 transition"
                                 >
                                     Daftar
                                 </Link>
