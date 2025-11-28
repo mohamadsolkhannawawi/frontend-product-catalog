@@ -6,12 +6,11 @@ import api from "@/lib/axios";
 import { API_ENDPOINTS } from "@/lib/constants";
 import Loader from "@/components/common/Loader";
 
-// ICONS
 import {
     Laptop,
     Shirt,
     UtensilsCrossed,
-    House,
+    Home as HomeIcon,
     Heart,
     Gamepad2,
 } from "lucide-react";
@@ -40,7 +39,7 @@ export default function Home() {
         { icon: Laptop, label: "Elektronik" },
         { icon: Shirt, label: "Pakaian" },
         { icon: UtensilsCrossed, label: "Makanan" },
-        { icon: House, label: "Rumah Tangga" },
+        { icon: HomeIcon, label: "Rumah Tangga" },
         { icon: Heart, label: "Kesehatan" },
         { icon: Gamepad2, label: "Hobi" },
     ];
@@ -49,9 +48,11 @@ export default function Home() {
         <div className="min-h-screen flex flex-col bg-[#F7F7FB]">
             <Navbar />
 
-            {/* HERO SECTION */}
-            <main className="max-w-7xl mx-auto px-6 pt-16 pb-20 flex-1">
-                <section className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+            {/* MAIN CONTENT */}
+            <main className="max-w-7xl mx-auto px-6 flex-1">
+
+                {/* HERO SECTION */}
+                <section className="pt-16 pb-20 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
                     <div>
                         <h1 className="text-5xl font-bold text-brand-black leading-tight">
                             Platform Katalog<br />Edukatif
@@ -64,7 +65,7 @@ export default function Home() {
 
                         <a
                             href="/catalog"
-                            className="inline-block mt-8 bg-brand-purple text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-purple-600 transition"
+                            className="inline-block mt-8 bg-brand-purple text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-purple-700 transition"
                         >
                             Jelajahi Produk
                         </a>
@@ -80,8 +81,10 @@ export default function Home() {
                 </section>
 
                 {/* CATEGORY SECTION */}
-                <section className="mt-24">
-                    <h2 className="text-3xl font-bold text-center mb-12">Kategori Produk</h2>
+                <section className="mt-10">
+                    <h2 className="text-3xl font-bold text-center mb-12">
+                        Kategori Produk
+                    </h2>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
                         {categories.map((item, idx) => (
@@ -113,8 +116,57 @@ export default function Home() {
                         <ProductGrid products={products} />
                     )}
                 </section>
+
+                {/* STATISTICS SECTION */}
+                <section className="mt-28 grid grid-cols-2 md:grid-cols-4 text-center py-12 bg-white rounded-2xl shadow-sm">
+                    <div>
+                        <h3 className="text-4xl font-bold text-brand-purple">10,000+</h3>
+                        <p className="text-gray-600 mt-2">Produk Tersedia</p>
+                    </div>
+                    <div>
+                        <h3 className="text-4xl font-bold text-brand-purple">1,500+</h3>
+                        <p className="text-gray-600 mt-2">Toko Terdaftar</p>
+                    </div>
+                    <div>
+                        <h3 className="text-4xl font-bold text-brand-purple">25,000+</h3>
+                        <p className="text-gray-600 mt-2">Pengguna Aktif</p>
+                    </div>
+                    <div>
+                        <h3 className="text-4xl font-bold text-brand-purple">34</h3>
+                        <p className="text-gray-600 mt-2">Provinsi</p>
+                    </div>
+                </section>
+
             </main>
 
+            {/* PURPLE PROMOTION SECTION */}
+            <section className="mt-28 bg-brand-purple text-white py-20 text-center">
+                <h2 className="text-4xl font-extrabold text-white mb-4">
+                    Bergabung Sebagai Penjual
+                </h2>
+
+                <p className="text-lg text-white opacity-95 mb-10">
+                    Jual produk lokal Anda dan jangkau lebih banyak pembeli di seluruh Indonesia
+                </p>
+
+                <div className="flex justify-center gap-6">
+                    <a
+                        href="/register-seller"
+                        className="bg-white text-brand-purple font-medium px-8 py-3 rounded-lg shadow hover:bg-gray-100 transition"
+                    >
+                        Daftar Sebagai Penjual
+                    </a>
+
+                    <a
+                        href="/learn-more"
+                        className="border border-white px-8 py-3 rounded-lg font-medium hover:bg-white hover:text-brand-purple transition"
+                    >
+                        Pelajari Lebih Lanjut
+                    </a>
+                </div>
+            </section>
+
+            {/* FOOTER */}
             <Footer />
         </div>
     );
