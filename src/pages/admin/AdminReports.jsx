@@ -48,7 +48,32 @@ export default function AdminReports() {
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
         } catch (error) {
-            console.error("Download error:", error);
+            // Log detailed server error when available to help debugging
+            if (error?.response) {
+                try {
+                    // If server returned JSON error, attempt to read it
+                    const reader = new FileReader();
+                    const blob = error.response.data;
+                    if (blob && blob instanceof Blob) {
+                        reader.onload = () => {
+                            console.error(
+                                "Download error (response):",
+                                reader.result
+                            );
+                        };
+                        reader.readAsText(blob);
+                    } else {
+                        console.error(
+                            "Download error (response):",
+                            error.response.data
+                        );
+                    }
+                } catch (e) {
+                    console.error("Download error while reading response:", e);
+                }
+            } else {
+                console.error("Download error:", error);
+            }
         } finally {
             setLoading((prev) => ({ ...prev, [reportType]: false }));
         }
