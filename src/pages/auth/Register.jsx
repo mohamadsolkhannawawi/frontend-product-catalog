@@ -10,6 +10,8 @@ import toast from "react-hot-toast";
 import Input from "@/components/common/Input";
 import useRegion from "@/hooks/useRegion";
 import useImagePreview from "@/hooks/useImagePreview";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 
 const schema = z
     .object({
@@ -57,7 +59,29 @@ export default function Register() {
         watch,
         setValue,
         formState: { errors, isSubmitting },
-    } = useForm({ resolver: zodResolver(schema) });
+    } = useForm({
+        resolver: zodResolver(schema),
+        defaultValues: {
+            name: "",
+            email: "",
+            password: "",
+            password_confirmation: "",
+            store_name: "",
+            store_description: "",
+            pic_name: "",
+            pic_phone: "",
+            address: "",
+            rt: "",
+            rw: "",
+            province_id: "",
+            city_id: "",
+            district_id: "",
+            village_id: "",
+            ktp_number: "",
+            pic_image: null,
+            ktp_file: null,
+        },
+    });
 
     const steps = ["Akun", "Data Toko", "Kredensial"];
     const [step, setStep] = useState(1);
@@ -204,6 +228,9 @@ export default function Register() {
     };
 
     const next = async () => {
+        // Get current form values
+        const values = watch();
+
         // validate fields per step
         let ok = false;
         if (step === 1) {
@@ -214,22 +241,47 @@ export default function Register() {
                 "password_confirmation",
             ]);
         } else if (step === 2) {
-            ok = await trigger([
-                "store_name",
-                "store_description",
-                "pic_name",
-                "pic_phone",
-                "address",
-                "rt",
-                "rw",
-                "province_id",
-                "city_id",
-                "district_id",
-                "village_id",
-            ]);
+            // Manual validation for step 2
+            const hasErrors =
+                !values.store_name ||
+                !values.pic_name ||
+                !values.pic_phone ||
+                !values.address ||
+                !values.rt ||
+                !values.rw ||
+                !values.province_id ||
+                !values.city_id ||
+                !values.district_id ||
+                !values.village_id;
+
+            if (hasErrors) {
+                // Trigger validation to show error messages
+                await trigger([
+                    "store_name",
+                    "pic_name",
+                    "pic_phone",
+                    "address",
+                    "rt",
+                    "rw",
+                    "province_id",
+                    "city_id",
+                    "district_id",
+                    "village_id",
+                ]);
+                ok = false;
+            } else {
+                ok = true;
+            }
         }
 
-        if (ok) setStep((s) => Math.min(3, s + 1));
+        if (ok) {
+            setStep((s) => Math.min(3, s + 1));
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+            if (step === 2) {
+                toast.error("Mohon lengkapi semua field yang diperlukan");
+            }
+        }
     };
 
     const prev = () => setStep((s) => Math.max(1, s - 1));
@@ -288,450 +340,539 @@ export default function Register() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col">
-            <main className="max-w-2xl mx-auto px-6 py-12 flex-1">
-                <h1 className="text-2xl font-bold mb-4">
-                    Daftar & Ajukan Seller
-                </h1>
+        <div className="min-h-screen bg-gray-50 flex flex-col">
+            <Navbar />
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    <OnboardingStepper step={step} steps={steps} />
+            <div className="flex-1 flex items-center justify-center py-12 px-4">
+                <div className="w-full max-w-2xl">
+                    {/* Title */}
+                    <div className="text-center mb-8">
+                        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                            Lengkapi Data Toko Anda
+                        </h1>
+                        <p className="text-gray-600">
+                            Bergabunglah dengan ribuan penjual lokal dan
+                            kembangkan bisnis Anda bersama Catalozy
+                        </p>
+                    </div>
 
-                    {step === 1 && (
-                        <div>
-                            <h2 className="text-lg font-semibold">Akun</h2>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">
-                                    Fullname
-                                </label>
-                                <Input
-                                    {...register("name")}
-                                    placeholder="Nama lengkap"
-                                />
-                                {errors.name && (
-                                    <p className="text-sm text-red-600 mt-1">
-                                        {errors.name.message}
-                                    </p>
-                                )}
+                    {/* Centered Card */}
+                    <div className="bg-white rounded-sm shadow-lg p-8 border border-gray-200">
+                        <form
+                            onSubmit={handleSubmit(onSubmit)}
+                            className="space-y-8"
+                        >
+                            {/* Stepper */}
+                            <div className="mb-8 flex justify-center">
+                                <OnboardingStepper step={step} steps={steps} />
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium mb-1">
-                                    Email
-                                </label>
-                                <Input
-                                    {...register("email")}
-                                    placeholder="email@contoh.com"
-                                />
-                                {errors.email && (
-                                    <p className="text-sm text-red-600 mt-1">
-                                        {errors.email.message}
-                                    </p>
-                                )}
-                            </div>
+                            {/* Step 1: Akun */}
+                            {step === 1 && (
+                                <div className="space-y-6">
+                                    <h2 className="text-xl font-semibold text-gray-900">
+                                        {steps[0]}
+                                    </h2>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        Password
-                                    </label>
-                                    <Input
-                                        type="password"
-                                        {...register("password")}
-                                        placeholder="Minimal 6 karakter"
-                                    />
-                                    {errors.password && (
-                                        <p className="text-sm text-red-600 mt-1">
-                                            {errors.password.message}
-                                        </p>
-                                    )}
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Nama Lengkap
+                                        </label>
+                                        <Input
+                                            {...register("name")}
+                                            placeholder="Masukkan nama lengkap"
+                                            className="h-12"
+                                        />
+                                        {errors.name && (
+                                            <p className="text-sm text-red-600 mt-1">
+                                                {errors.name.message}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Email
+                                        </label>
+                                        <Input
+                                            type="email"
+                                            {...register("email")}
+                                            placeholder="email@contoh.com"
+                                            className="h-12"
+                                        />
+                                        {errors.email && (
+                                            <p className="text-sm text-red-600 mt-1">
+                                                {errors.email.message}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Password
+                                            </label>
+                                            <Input
+                                                type="password"
+                                                {...register("password")}
+                                                placeholder="Minimal 6 karakter"
+                                                className="h-12"
+                                            />
+                                            {errors.password && (
+                                                <p className="text-sm text-red-600 mt-1">
+                                                    {errors.password.message}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Konfirmasi Password
+                                            </label>
+                                            <Input
+                                                type="password"
+                                                {...register(
+                                                    "password_confirmation"
+                                                )}
+                                                placeholder="Ulangi password"
+                                                className="h-12"
+                                            />
+                                            {errors.password_confirmation && (
+                                                <p className="text-sm text-red-600 mt-1">
+                                                    {
+                                                        errors
+                                                            .password_confirmation
+                                                            .message
+                                                    }
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-3 pt-4">
+                                        <button
+                                            type="button"
+                                            className="flex-1 px-6 py-3 border-2 border-purple-600 text-purple-600 font-medium rounded-sm hover:bg-purple-50 transition"
+                                            onClick={() => navigate("/login")}
+                                        >
+                                            Kembali
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="flex-1 px-6 py-3 bg-purple-600 text-white font-medium rounded-sm hover:bg-purple-700 transition"
+                                            onClick={next}
+                                        >
+                                            Lanjut
+                                        </button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        Konfirmasi Password
-                                    </label>
-                                    <Input
-                                        type="password"
-                                        {...register("password_confirmation")}
-                                        placeholder="Ulangi password"
-                                    />
-                                    {errors.password_confirmation && (
-                                        <p className="text-sm text-red-600 mt-1">
-                                            {
-                                                errors.password_confirmation
-                                                    .message
-                                            }
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
+                            )}
 
-                            <div className="flex gap-2 mt-4">
-                                <button
-                                    type="button"
-                                    className="btn-primary ml-auto"
-                                    onClick={next}
-                                >
-                                    Next
-                                </button>
-                            </div>
-                        </div>
-                    )}
+                            {/* Step 2: Data Toko */}
+                            {step === 2 && (
+                                <div className="space-y-6">
+                                    <h2 className="text-xl font-semibold text-gray-900">
+                                        Lengkapi Data Toko Anda
+                                    </h2>
 
-                    {step === 2 && (
-                        <div>
-                            <h2 className="text-lg font-semibold">Data Toko</h2>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">
-                                    Nama Toko
-                                </label>
-                                <Input
-                                    {...register("store_name")}
-                                    placeholder="Nama toko"
-                                />
-                                {errors.store_name && (
-                                    <p className="text-sm text-red-600 mt-1">
-                                        {errors.store_name.message}
-                                    </p>
-                                )}
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">
-                                    Deskripsi Toko
-                                </label>
-                                <Input
-                                    {...register("store_description")}
-                                    placeholder="Deskripsi singkat"
-                                />
-                            </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Nama Toko
+                                        </label>
+                                        <Input
+                                            {...register("store_name")}
+                                            placeholder="Contoh: Kerajinan Kayu Jepara"
+                                            className="h-12"
+                                        />
+                                        {errors.store_name && (
+                                            <p className="text-sm text-red-600 mt-1">
+                                                {errors.store_name.message}
+                                            </p>
+                                        )}
+                                    </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        Nama PIC
-                                    </label>
-                                    <Input
-                                        {...register("pic_name")}
-                                        placeholder="Nama penanggung jawab"
-                                    />
-                                    {errors.pic_name && (
-                                        <p className="text-sm text-red-600 mt-1">
-                                            {errors.pic_name.message}
-                                        </p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        No. HP PIC
-                                    </label>
-                                    <Input
-                                        {...register("pic_phone")}
-                                        placeholder="0812xxxx"
-                                    />
-                                    {errors.pic_phone && (
-                                        <p className="text-sm text-red-600 mt-1">
-                                            {errors.pic_phone.message}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Deskripsi Toko
+                                        </label>
+                                        <textarea
+                                            {...register("store_description")}
+                                            placeholder="Ceritakan singkat tentang toko Anda..."
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                                            rows="4"
+                                        />
+                                    </div>
 
-                            <div>
-                                <label className="block text-sm font-medium mb-1">
-                                    Alamat Jalan PIC
-                                </label>
-                                <Input
-                                    {...register("address")}
-                                    placeholder="Alamat lengkap"
-                                />
-                                {errors.address && (
-                                    <p className="text-sm text-red-600 mt-1">
-                                        {errors.address.message}
-                                    </p>
-                                )}
-                            </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Nama PIC (Penanggung Jawab)
+                                            </label>
+                                            <Input
+                                                {...register("pic_name")}
+                                                placeholder="Contoh: Budi Santoso"
+                                                className="h-12"
+                                            />
+                                            {errors.pic_name && (
+                                                <p className="text-sm text-red-600 mt-1">
+                                                    {errors.pic_name.message}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                No. HP PIC
+                                            </label>
+                                            <Input
+                                                {...register("pic_phone")}
+                                                placeholder="Contoh: 081234567890"
+                                                className="h-12"
+                                            />
+                                            {errors.pic_phone && (
+                                                <p className="text-sm text-red-600 mt-1">
+                                                    {errors.pic_phone.message}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        RT
-                                    </label>
-                                    <Input
-                                        {...register("rt")}
-                                        placeholder="RT"
-                                    />
-                                    {errors.rt && (
-                                        <p className="text-sm text-red-600 mt-1">
-                                            {errors.rt.message}
-                                        </p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        RW
-                                    </label>
-                                    <Input
-                                        {...register("rw")}
-                                        placeholder="RW"
-                                    />
-                                    {errors.rw && (
-                                        <p className="text-sm text-red-600 mt-1">
-                                            {errors.rw.message}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Alamat Toko
+                                        </label>
+                                        <textarea
+                                            {...register("address")}
+                                            placeholder="Jl. Contoh No. 123"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                                            rows="3"
+                                        />
+                                        {errors.address && (
+                                            <p className="text-sm text-red-600 mt-1">
+                                                {errors.address.message}
+                                            </p>
+                                        )}
+                                    </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        Provinsi
-                                    </label>
-                                    <select
-                                        {...register("province_id")}
-                                        className="input"
-                                    >
-                                        <option value="">Pilih provinsi</option>
-                                        {provinces.map((p) => (
-                                            <option
-                                                key={p.code || p.id}
-                                                value={p.code || p.id}
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                RT
+                                            </label>
+                                            <Input
+                                                {...register("rt")}
+                                                placeholder="Contoh: 01"
+                                                className="h-12"
+                                            />
+                                            {errors.rt && (
+                                                <p className="text-sm text-red-600 mt-1">
+                                                    {errors.rt.message}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                RW
+                                            </label>
+                                            <Input
+                                                {...register("rw")}
+                                                placeholder="Contoh: 05"
+                                                className="h-12"
+                                            />
+                                            {errors.rw && (
+                                                <p className="text-sm text-red-600 mt-1">
+                                                    {errors.rw.message}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Provinsi
+                                            </label>
+                                            <select
+                                                {...register("province_id")}
+                                                className="w-full h-12 px-4 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                                             >
-                                                {p.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    {errors.province_id && (
-                                        <p className="text-sm text-red-600 mt-1">
-                                            {errors.province_id.message}
-                                        </p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        Kota/Kab.
-                                    </label>
-                                    <select
-                                        {...register("city_id")}
-                                        disabled={
-                                            !watchedProvince || cityLoading
-                                        }
-                                        className="input"
-                                    >
-                                        {cityLoading ? (
-                                            <option value="">
-                                                Memuat kota...
-                                            </option>
-                                        ) : (
-                                            <>
                                                 <option value="">
-                                                    Pilih kota
+                                                    Jawa Tengah
                                                 </option>
-                                                {cities.map((c) => (
+                                                {provinces.map((p) => (
                                                     <option
-                                                        key={c.code || c.id}
-                                                        value={c.code || c.id}
+                                                        key={p.code || p.id}
+                                                        value={p.code || p.id}
                                                     >
-                                                        {c.name}
+                                                        {p.name}
                                                     </option>
                                                 ))}
-                                            </>
-                                        )}
-                                    </select>
-                                    {errors.city_id && (
-                                        <p className="text-sm text-red-600 mt-1">
-                                            {errors.city_id.message}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        Kecamatan
-                                    </label>
-                                    <select
-                                        {...register("district_id")}
-                                        disabled={
-                                            !watchedCity || districtLoading
-                                        }
-                                        className="input"
-                                    >
-                                        {districtLoading ? (
-                                            <option value="">
-                                                Memuat kecamatan...
-                                            </option>
-                                        ) : (
-                                            <>
-                                                <option value="">
-                                                    Pilih kecamatan
-                                                </option>
-                                                {districts.map((d) => (
-                                                    <option
-                                                        key={d.code || d.id}
-                                                        value={d.code || d.id}
-                                                    >
-                                                        {d.name}
-                                                    </option>
-                                                ))}
-                                            </>
-                                        )}
-                                    </select>
-                                    {errors.district_id && (
-                                        <p className="text-sm text-red-600 mt-1">
-                                            {errors.district_id.message}
-                                        </p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        Kelurahan
-                                    </label>
-                                    <select
-                                        {...register("village_id")}
-                                        disabled={
-                                            !watchedDistrict || villageLoading
-                                        }
-                                        className="input"
-                                    >
-                                        {villageLoading ? (
-                                            <option value="">
-                                                Memuat kelurahan...
-                                            </option>
-                                        ) : (
-                                            <>
-                                                <option value="">
-                                                    Pilih kelurahan
-                                                </option>
-                                                {villages.map((v) => (
-                                                    <option
-                                                        key={v.code || v.id}
-                                                        value={v.code || v.id}
-                                                    >
-                                                        {v.name}
-                                                    </option>
-                                                ))}
-                                            </>
-                                        )}
-                                    </select>
-                                    {errors.village_id && (
-                                        <p className="text-sm text-red-600 mt-1">
-                                            {errors.village_id.message}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="flex gap-2 mt-4">
-                                <button
-                                    className="btn-secondary"
-                                    type="button"
-                                    onClick={prev}
-                                >
-                                    Back
-                                </button>
-                                <button
-                                    className="btn-primary ml-auto"
-                                    type="button"
-                                    onClick={next}
-                                >
-                                    Next
-                                </button>
-                            </div>
-                        </div>
-                    )}
-
-                    {step === 3 && (
-                        <div>
-                            <h2 className="text-lg font-semibold">
-                                Data Kredensial
-                            </h2>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">
-                                    NIK (KTP)
-                                </label>
-                                <Input
-                                    {...register("ktp_number")}
-                                    placeholder="16 digit NIK"
-                                />
-                                {errors.ktp_number && (
-                                    <p className="text-sm text-red-600 mt-1">
-                                        {errors.ktp_number.message}
-                                    </p>
-                                )}
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        Photo KTP PIC (jpg/png)
-                                    </label>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleKtpChange}
-                                    />
-                                    {ktp.previews && (
-                                        <div className="mt-2">
-                                            <img
-                                                src={ktp.previews}
-                                                alt="preview-ktp"
-                                                className="w-48 h-28 object-cover rounded-md"
-                                            />
+                                            </select>
+                                            {errors.province_id && (
+                                                <p className="text-sm text-red-600 mt-1">
+                                                    {errors.province_id.message}
+                                                </p>
+                                            )}
                                         </div>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">
-                                        Photo PIC (jpg/png)
-                                    </label>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handlePicChange}
-                                    />
-                                    {pic.previews && (
-                                        <div className="mt-2">
-                                            <img
-                                                src={pic.previews}
-                                                alt="preview-pic"
-                                                className="w-24 h-24 object-cover rounded-md"
-                                            />
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Kota/Kabupaten
+                                            </label>
+                                            <select
+                                                {...register("city_id")}
+                                                disabled={
+                                                    !watchedProvince ||
+                                                    cityLoading
+                                                }
+                                                className="w-full h-12 px-4 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-100"
+                                            >
+                                                {cityLoading ? (
+                                                    <option value="">
+                                                        Memuat kota...
+                                                    </option>
+                                                ) : (
+                                                    <>
+                                                        <option value="">
+                                                            Semarang
+                                                        </option>
+                                                        {cities.map((c) => (
+                                                            <option
+                                                                key={
+                                                                    c.code ||
+                                                                    c.id
+                                                                }
+                                                                value={
+                                                                    c.code ||
+                                                                    c.id
+                                                                }
+                                                            >
+                                                                {c.name}
+                                                            </option>
+                                                        ))}
+                                                    </>
+                                                )}
+                                            </select>
+                                            {errors.city_id && (
+                                                <p className="text-sm text-red-600 mt-1">
+                                                    {errors.city_id.message}
+                                                </p>
+                                            )}
                                         </div>
-                                    )}
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Kecamatan
+                                            </label>
+                                            <select
+                                                {...register("district_id")}
+                                                disabled={
+                                                    !watchedCity ||
+                                                    districtLoading
+                                                }
+                                                className="w-full h-12 px-4 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-100"
+                                            >
+                                                {districtLoading ? (
+                                                    <option value="">
+                                                        Memuat kecamatan...
+                                                    </option>
+                                                ) : (
+                                                    <>
+                                                        <option value="">
+                                                            Pilih Kecamatan
+                                                        </option>
+                                                        {districts.map((d) => (
+                                                            <option
+                                                                key={
+                                                                    d.code ||
+                                                                    d.id
+                                                                }
+                                                                value={
+                                                                    d.code ||
+                                                                    d.id
+                                                                }
+                                                            >
+                                                                {d.name}
+                                                            </option>
+                                                        ))}
+                                                    </>
+                                                )}
+                                            </select>
+                                            {errors.district_id && (
+                                                <p className="text-sm text-red-600 mt-1">
+                                                    {errors.district_id.message}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Kelurahan
+                                            </label>
+                                            <select
+                                                {...register("village_id")}
+                                                disabled={
+                                                    !watchedDistrict ||
+                                                    villageLoading
+                                                }
+                                                className="w-full h-12 px-4 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-100"
+                                            >
+                                                {villageLoading ? (
+                                                    <option value="">
+                                                        Memuat kelurahan...
+                                                    </option>
+                                                ) : (
+                                                    <>
+                                                        <option value="">
+                                                            Pilih Kelurahan
+                                                        </option>
+                                                        {villages.map((v) => (
+                                                            <option
+                                                                key={
+                                                                    v.code ||
+                                                                    v.id
+                                                                }
+                                                                value={
+                                                                    v.code ||
+                                                                    v.id
+                                                                }
+                                                            >
+                                                                {v.name}
+                                                            </option>
+                                                        ))}
+                                                    </>
+                                                )}
+                                            </select>
+                                            {errors.village_id && (
+                                                <p className="text-sm text-red-600 mt-1">
+                                                    {errors.village_id.message}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-3 pt-4">
+                                        <button
+                                            type="button"
+                                            className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-sm hover:bg-gray-50 transition"
+                                            onClick={prev}
+                                        >
+                                            Kembali
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="flex-1 px-6 py-3 bg-purple-600 text-white font-medium rounded-sm hover:bg-purple-700 transition"
+                                            onClick={next}
+                                        >
+                                            Lanjut
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
-                            <div className="flex gap-2 mt-4">
-                                <button
-                                    className="btn-secondary"
-                                    type="button"
-                                    onClick={prev}
+                            {/* Step 3: Kredensial */}
+                            {step === 3 && (
+                                <div className="space-y-6">
+                                    <h2 className="text-xl font-semibold text-gray-900">
+                                        {steps[2]}
+                                    </h2>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            NIK (KTP)
+                                        </label>
+                                        <Input
+                                            {...register("ktp_number")}
+                                            placeholder="16 digit NIK"
+                                            className="h-12"
+                                        />
+                                        {errors.ktp_number && (
+                                            <p className="text-sm text-red-600 mt-1">
+                                                {errors.ktp_number.message}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Foto KTP (jpg/png)
+                                            </label>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleKtpChange}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                            />
+                                            {ktp.previews && (
+                                                <div className="mt-3">
+                                                    <img
+                                                        src={ktp.previews}
+                                                        alt="preview-ktp"
+                                                        className="w-full h-32 object-cover rounded-sm border border-gray-200"
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Foto Diri (jpg/png)
+                                            </label>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handlePicChange}
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                            />
+                                            {pic.previews && (
+                                                <div className="mt-3">
+                                                    <img
+                                                        src={pic.previews}
+                                                        alt="preview-pic"
+                                                        className="w-full h-32 object-cover rounded-sm border border-gray-200"
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-3 pt-4">
+                                        <button
+                                            type="button"
+                                            className="flex-1 px-6 py-3 border-2 border-purple-600 text-purple-600 font-medium rounded-sm hover:bg-purple-50 transition"
+                                            onClick={prev}
+                                        >
+                                            Kembali
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="flex-1 px-6 py-3 bg-purple-600 text-white font-medium rounded-sm hover:bg-purple-700 transition disabled:bg-gray-400"
+                                            disabled={isSubmitting}
+                                        >
+                                            {isSubmitting
+                                                ? "Mendaftarkan..."
+                                                : "Daftar sebagai Seller"}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </form>
+
+                        {/* Footer */}
+                        <div className="text-center mt-6 pt-6 border-t border-gray-200">
+                            <p className="text-sm text-gray-600">
+                                Sudah punya akun?{" "}
+                                <Link
+                                    to="/login"
+                                    className="text-purple-600 font-medium hover:text-purple-700"
                                 >
-                                    Back
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="btn-primary ml-auto"
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting
-                                        ? "Mendaftarkan..."
-                                        : "Daftar sebagai Seller"}
-                                </button>
-                            </div>
+                                    Masuk
+                                </Link>
+                            </p>
                         </div>
-                    )}
-                </form>
+                    </div>
+                </div>
+            </div>
 
-                <p className="text-sm text-brand-gray-600 mt-4">
-                    Sudah punya akun?{" "}
-                    <Link to="/login" className="text-brand-primary">
-                        Masuk
-                    </Link>
-                </p>
-            </main>
+            <Footer />
         </div>
     );
 }

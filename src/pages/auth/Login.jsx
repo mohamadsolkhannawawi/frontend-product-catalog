@@ -6,11 +6,15 @@ import * as z from "zod";
 import api from "@/lib/axios";
 import toast from "react-hot-toast";
 import Input from "@/components/common/Input";
+import Button from "@/components/common/Button";
 import { useAuth } from "@/context/AuthContext";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 
 const schema = z.object({
     email: z.string().min(1, "Email wajib diisi").email("Email tidak valid"),
     password: z.string().min(1, "Password wajib diisi"),
+    rememberMe: z.boolean().optional(),
 });
 
 export default function Login() {
@@ -20,7 +24,10 @@ export default function Login() {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-    } = useForm({ resolver: zodResolver(schema) });
+    } = useForm({
+        resolver: zodResolver(schema),
+        defaultValues: { rememberMe: false },
+    });
 
     async function onSubmit(values) {
         try {
@@ -58,60 +65,117 @@ export default function Login() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col">
-            <main className="max-w-md mx-auto px-6 py-12 flex-1">
-                <h1 className="text-2xl font-bold mb-4">Masuk</h1>
+        <div className="min-h-screen flex flex-col bg-gray-50">
+            <Navbar />
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium mb-1">
-                            Email
-                        </label>
-                        <Input
-                            {...register("email")}
-                            placeholder="email@contoh.com"
-                        />
-                        {errors.email && (
-                            <p className="text-sm text-red-600 mt-1">
-                                {errors.email.message}
-                            </p>
-                        )}
+            <div className="flex-1 flex items-center justify-center py-12 px-4">
+                <div className="w-full max-w-md">
+                    {/* Header */}
+                    <div className="text-center mb-8">
+                        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                            Selamat Datang Kembali
+                        </h1>
+                        <p className="text-gray-600">
+                            Masuk ke akun Catalozy Anda
+                        </p>
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium mb-1">
-                            Password
-                        </label>
-                        <Input
-                            type="password"
-                            {...register("password")}
-                            placeholder="Password"
-                        />
-                        {errors.password && (
-                            <p className="text-sm text-red-600 mt-1">
-                                {errors.password.message}
-                            </p>
-                        )}
-                    </div>
-
-                    <div>
-                        <button
-                            type="submit"
-                            className="btn-primary w-full"
-                            disabled={isSubmitting}
+                    {/* Login Card */}
+                    <div className="bg-white border border-gray-200 rounded-sm p-8 shadow-sm">
+                        <form
+                            onSubmit={handleSubmit(onSubmit)}
+                            className="space-y-6"
                         >
-                            {isSubmitting ? "Masuk..." : "Masuk"}
-                        </button>
-                    </div>
-                </form>
+                            {/* Email Field */}
+                            <div>
+                                <div className="flex items-center justify-between mb-2">
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Email
+                                    </label>
+                                </div>
+                                <Input
+                                    {...register("email")}
+                                    type="email"
+                                    placeholder="email@contoh.com"
+                                    className="h-12"
+                                />
+                                {errors.email && (
+                                    <p className="text-sm text-red-600 mt-1">
+                                        {errors.email.message}
+                                    </p>
+                                )}
+                            </div>
 
-                <p className="text-sm text-brand-gray-600 mt-4">
-                    Belum punya akun?{" "}
-                    <Link to="/register" className="text-brand-primary">
-                        Daftar
-                    </Link>
-                </p>
-            </main>
+                            {/* Password Field */}
+                            <div>
+                                <div className="flex items-center justify-between mb-2">
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Password
+                                    </label>
+                                    <Link
+                                        to="/forgot-password"
+                                        className="text-sm text-purple-600 hover:underline transition"
+                                    >
+                                        Lupa password?
+                                    </Link>
+                                </div>
+                                <Input
+                                    {...register("password")}
+                                    type="password"
+                                    placeholder="Masukkan password Anda"
+                                    className="h-12"
+                                />
+                                {errors.password && (
+                                    <p className="text-sm text-red-600 mt-1">
+                                        {errors.password.message}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Remember Me Checkbox */}
+                            <div className="flex items-center gap-3">
+                                <input
+                                    type="checkbox"
+                                    id="remember"
+                                    {...register("rememberMe")}
+                                    className="w-4 h-4 rounded border-gray-300 cursor-pointer"
+                                />
+                                <label
+                                    htmlFor="remember"
+                                    className="text-sm text-gray-700 cursor-pointer select-none"
+                                >
+                                    Ingat saya
+                                </label>
+                            </div>
+
+                            {/* Submit Button */}
+                            <Button
+                                type="submit"
+                                variant="primary"
+                                className="w-full h-12 text-base font-medium"
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? "Masuk..." : "Masuk"}
+                            </Button>
+                        </form>
+
+                        {/* Sign Up Link */}
+                        <div className="mt-6 text-center">
+                            <p className="text-sm text-gray-600">
+                                Belum punya akun?{" "}
+                                <Link
+                                    to="/register"
+                                    className="text-purple-600 font-medium hover:underline transition"
+                                >
+                                    Daftar sebagai penjual
+                                </Link>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <Footer />
         </div>
     );
 }
