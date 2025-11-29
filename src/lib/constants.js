@@ -4,6 +4,9 @@ export const API_ENDPOINTS = {
     REGISTER: "/register",
     LOGOUT: "/auth/logout",
     ME: "/auth/me",
+    // backend: POST /validate/unique exists; frontend issues GET with query params for convenience
+    CHECK_UNIQUE: (field, value) =>
+        `/validate/unique?field=${field}&value=${encodeURIComponent(value)}`,
     // Seller onboarding
     SELLER_ONBOARD: "/seller/onboard",
 

@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { Eye, EyeOff } from "lucide-react";
 import api from "@/lib/axios";
 import { API_ENDPOINTS } from "@/lib/constants";
 import toast from "react-hot-toast";
@@ -21,15 +22,27 @@ const schema = z
             .string()
             .min(1, "Email wajib diisi")
             .email("Email tidak valid"),
-        password: z.string().min(6, "Minimal 6 karakter"),
-        password_confirmation: z.string().min(6, "Konfirmasi password wajib"),
+        password: z
+            .string()
+            .min(8, "Minimal 8 karakter")
+            .regex(/[A-Z]/, "Harus mengandung huruf besar (A-Z)")
+            .regex(/[a-z]/, "Harus mengandung huruf kecil (a-z)")
+            .regex(/[0-9]/, "Harus mengandung angka (0-9)")
+            .regex(
+                /[!@#$%^&*()_+=[\]{};"':\\|,.<>/?-]/,
+                "Harus mengandung karakter spesial (!@#$%^&* dll)"
+            ),
+        password_confirmation: z.string().min(8, "Konfirmasi password wajib"),
 
         // Seller onboarding
         store_name: z.string().min(1, "Nama toko wajib diisi"),
         store_description: z.string().optional(),
 
         pic_name: z.string().min(1, "Nama PIC wajib diisi"),
-        pic_phone: z.string().min(1, "No. HP PIC wajib diisi"),
+        pic_phone: z
+            .string()
+            .min(1, "No. HP PIC wajib diisi")
+            .regex(/^[0-9]+$/, "No. HP hanya boleh mengandung angka"),
 
         address: z.string().min(1, "Alamat wajib diisi"),
         rt: z.string().min(1, "RT wajib diisi"),
@@ -42,16 +55,27 @@ const schema = z
 
         ktp_number: z.string().length(16, "NIK harus 16 digit"),
 
-        pic_image: z.any().optional(),
-        ktp_file: z.any().optional(),
+        pic_image: z
+            .any()
+            .refine((v) => !!v && !!v.name, {
+                message: "Foto PIC wajib diunggah",
+            }),
+        ktp_file: z
+            .any()
+            .refine((v) => !!v && !!v.name, {
+                message: "Foto KTP wajib diunggah",
+            }),
     })
     .refine((data) => data.password === data.password_confirmation, {
-        message: "Password dan konfirmasi tidak cocok",
+        message:
+            "Konfirmasi password harus sama dengan password yang dimasukkan",
         path: ["password_confirmation"],
     });
 
 export default function Register() {
     const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
+    const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
     const {
         register,
         handleSubmit,
@@ -197,6 +221,11 @@ export default function Register() {
         const f = e?.target?.files?.[0];
         if (!f) {
             ktp.handleFileChange(e);
+            try {
+                setValue("ktp_file", null);
+            } catch (err) {
+                console.warn("setValue ktp_file failed:", err);
+            }
             return;
         }
         if (!ALLOWED_TYPES.includes(f.type)) {
@@ -208,12 +237,24 @@ export default function Register() {
             return;
         }
         ktp.handleFileChange(e);
+        try {
+            setValue("ktp_file", f);
+            // trigger validation for file field
+            trigger("ktp_file");
+        } catch (err) {
+            console.warn("setValue ktp_file failed:", err);
+        }
     };
 
     const handlePicChange = (e) => {
         const f = e?.target?.files?.[0];
         if (!f) {
             pic.handleFileChange(e);
+            try {
+                setValue("pic_image", null);
+            } catch (err) {
+                console.warn("setValue pic_image failed:", err);
+            }
             return;
         }
         if (!ALLOWED_TYPES.includes(f.type)) {
@@ -225,6 +266,13 @@ export default function Register() {
             return;
         }
         pic.handleFileChange(e);
+        try {
+            setValue("pic_image", f);
+            // trigger validation for file field
+            trigger("pic_image");
+        } catch (err) {
+            console.warn("setValue pic_image failed:", err);
+        }
     };
 
     const next = async () => {
@@ -254,6 +302,12 @@ export default function Register() {
                 !values.district_id ||
                 !values.village_id;
 
+            // Check if numeric fields contain only digits
+            const isValidNumeric =
+                /^[0-9]+$/.test(values.pic_phone || "") &&
+                /^[0-9]+$/.test(values.rt || "") &&
+                /^[0-9]+$/.test(values.rw || "");
+
             if (hasErrors) {
                 // Trigger validation to show error messages
                 await trigger([
@@ -268,6 +322,9 @@ export default function Register() {
                     "district_id",
                     "village_id",
                 ]);
+                ok = false;
+            } else if (!isValidNumeric) {
+                toast.error("No. HP PIC, RT, dan RW harus berupa angka saja");
                 ok = false;
             } else {
                 ok = true;
@@ -287,8 +344,43 @@ export default function Register() {
     const prev = () => setStep((s) => Math.max(1, s - 1));
 
     async function onSubmit(values) {
-        // Validasi dilakukan otomatis oleh backend saat submit
+        // Validasi keunikan field sebelum submit
         try {
+            const uniquenessChecks = [
+                { field: "email", value: values.email },
+                { field: "store_name", value: values.store_name },
+                { field: "ktp_number", value: values.ktp_number },
+                { field: "pic_phone", value: values.pic_phone },
+            ];
+
+            for (const check of uniquenessChecks) {
+                try {
+                    const response = await api.get(
+                        API_ENDPOINTS.CHECK_UNIQUE(check.field, check.value)
+                    );
+                    if (!response.data.available) {
+                        const fieldNames = {
+                            email: "Email",
+                            store_name: "Nama toko",
+                            ktp_number: "NIK",
+                            pic_phone: "No. HP PIC",
+                        };
+                        toast.error(
+                            `${
+                                fieldNames[check.field]
+                            } sudah digunakan. Gunakan yang lain.`
+                        );
+                        return;
+                    }
+                } catch {
+                    // Jika endpoint tidak ada, lanjutkan submit (akan divalidasi backend)
+                    console.warn(
+                        `Uniqueness check untuk ${check.field} tidak tersedia`
+                    );
+                }
+            }
+
+            // Jika semua validasi lolos, lanjutkan ke submit
             const fd = new FormData();
             fd.append("name", values.name);
             fd.append("email", values.email);
@@ -412,12 +504,33 @@ export default function Register() {
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                                 Password
                                             </label>
-                                            <Input
-                                                type="password"
-                                                {...register("password")}
-                                                placeholder="Minimal 6 karakter"
-                                                className="h-12"
-                                            />
+                                            <div className="relative">
+                                                <Input
+                                                    type={
+                                                        showPassword
+                                                            ? "text"
+                                                            : "password"
+                                                    }
+                                                    {...register("password")}
+                                                    placeholder="Minimal 8 karakter"
+                                                    className="h-12 pr-12"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        setShowPassword(
+                                                            !showPassword
+                                                        )
+                                                    }
+                                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition"
+                                                >
+                                                    {showPassword ? (
+                                                        <EyeOff className="w-5 h-5" />
+                                                    ) : (
+                                                        <Eye className="w-5 h-5" />
+                                                    )}
+                                                </button>
+                                            </div>
                                             {errors.password && (
                                                 <p className="text-sm text-red-600 mt-1">
                                                     {errors.password.message}
@@ -428,14 +541,35 @@ export default function Register() {
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                                 Konfirmasi Password
                                             </label>
-                                            <Input
-                                                type="password"
-                                                {...register(
-                                                    "password_confirmation"
-                                                )}
-                                                placeholder="Ulangi password"
-                                                className="h-12"
-                                            />
+                                            <div className="relative">
+                                                <Input
+                                                    type={
+                                                        showPasswordConfirm
+                                                            ? "text"
+                                                            : "password"
+                                                    }
+                                                    {...register(
+                                                        "password_confirmation"
+                                                    )}
+                                                    placeholder="Ulangi password"
+                                                    className="h-12 pr-12"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        setShowPasswordConfirm(
+                                                            !showPasswordConfirm
+                                                        )
+                                                    }
+                                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition"
+                                                >
+                                                    {showPasswordConfirm ? (
+                                                        <EyeOff className="w-5 h-5" />
+                                                    ) : (
+                                                        <Eye className="w-5 h-5" />
+                                                    )}
+                                                </button>
+                                            </div>
                                             {errors.password_confirmation && (
                                                 <p className="text-sm text-red-600 mt-1">
                                                     {
@@ -595,7 +729,7 @@ export default function Register() {
                                                 className="w-full h-12 px-4 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                                             >
                                                 <option value="">
-                                                    Jawa Tengah
+                                                    Pilih Provinsi
                                                 </option>
                                                 {provinces.map((p) => (
                                                     <option
@@ -631,7 +765,7 @@ export default function Register() {
                                                 ) : (
                                                     <>
                                                         <option value="">
-                                                            Semarang
+                                                            Pilih Kota/Kabupaten
                                                         </option>
                                                         {cities.map((c) => (
                                                             <option
@@ -794,7 +928,7 @@ export default function Register() {
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                Foto KTP (jpg/png)
+                                                Foto KTP (jpg/png) - Rasio 4:3
                                             </label>
                                             <input
                                                 type="file"
@@ -803,18 +937,23 @@ export default function Register() {
                                                 className="w-full px-4 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                                             />
                                             {ktp.previews && (
-                                                <div className="mt-3">
+                                                <div className="mt-3 bg-gray-100 rounded-sm border border-gray-200 p-2">
                                                     <img
                                                         src={ktp.previews}
                                                         alt="preview-ktp"
-                                                        className="w-full h-32 object-cover rounded-sm border border-gray-200"
+                                                        className="w-full h-40 object-contain rounded-sm"
                                                     />
                                                 </div>
+                                            )}
+                                            {errors.ktp_file && (
+                                                <p className="text-sm text-red-600 mt-1">
+                                                    {errors.ktp_file.message}
+                                                </p>
                                             )}
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                Foto Diri (jpg/png)
+                                                Foto Diri (jpg/png) - Rasio 1:1
                                             </label>
                                             <input
                                                 type="file"
@@ -823,13 +962,18 @@ export default function Register() {
                                                 className="w-full px-4 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                                             />
                                             {pic.previews && (
-                                                <div className="mt-3">
+                                                <div className="mt-3 bg-gray-100 rounded-sm border border-gray-200 p-2 flex justify-center">
                                                     <img
                                                         src={pic.previews}
                                                         alt="preview-pic"
-                                                        className="w-full h-32 object-cover rounded-sm border border-gray-200"
+                                                        className="w-40 h-40 object-cover rounded-sm"
                                                     />
                                                 </div>
+                                            )}
+                                            {errors.pic_image && (
+                                                <p className="text-sm text-red-600 mt-1">
+                                                    {errors.pic_image.message}
+                                                </p>
                                             )}
                                         </div>
                                     </div>
