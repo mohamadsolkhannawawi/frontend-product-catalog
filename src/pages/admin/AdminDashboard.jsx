@@ -26,17 +26,17 @@ export default function AdminDashboard({ initialActive = "overview" }) {
         },
         {
             key: "approval",
-            label: "Seller Approval",
+            label: "Persetujuan Penjual",
             icon: <UserCheck className="w-5 h-5" />,
         },
         {
             key: "management",
-            label: "Seller Management",
+            label: "Manajemen Penjual",
             icon: <Users className="w-5 h-5" />,
         },
         {
             key: "reports",
-            label: "Reports",
+            label: "Laporan",
             icon: <FileText className="w-5 h-5" />,
         },
     ];
