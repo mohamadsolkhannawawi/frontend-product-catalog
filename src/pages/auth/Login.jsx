@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Eye, EyeOff } from "lucide-react";
 import api from "@/lib/axios";
 import toast from "react-hot-toast";
 import Input from "@/components/common/Input";
@@ -21,7 +20,6 @@ const schema = z.object({
 export default function Login() {
     const navigate = useNavigate();
     const auth = useAuth();
-    const [showPassword, setShowPassword] = useState(false);
     const {
         register,
         handleSubmit,
@@ -55,19 +53,12 @@ export default function Login() {
             else if (me && me.role === "seller") navigate("/seller/dashboard");
             else navigate("/");
         } catch (err) {
-            // If backend returns 401 Unauthorized, show a friendly Indonesian message
-            const status = err?.response?.status;
-            if (status === 401) {
-                toast.error("Email atau password salah");
-                return;
-            }
-
-            // Show validation / server errors (422) or generic message
+            // Show validation / server errors
+            const msg = err?.response?.data?.message || "Login gagal";
             if (err?.response?.data?.errors) {
                 const first = Object.values(err.response.data.errors)[0];
                 toast.error(Array.isArray(first) ? first[0] : String(first));
             } else {
-                const msg = err?.response?.data?.message || "Login gagal";
                 toast.error(msg);
             }
         }
@@ -128,29 +119,12 @@ export default function Login() {
                                         Lupa password?
                                     </Link>
                                 </div>
-                                <div className="relative">
-                                    <Input
-                                        {...register("password")}
-                                        type={
-                                            showPassword ? "text" : "password"
-                                        }
-                                        placeholder="Masukkan password Anda"
-                                        className="h-12 pr-12"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            setShowPassword(!showPassword)
-                                        }
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition"
-                                    >
-                                        {showPassword ? (
-                                            <EyeOff className="w-5 h-5" />
-                                        ) : (
-                                            <Eye className="w-5 h-5" />
-                                        )}
-                                    </button>
-                                </div>
+                                <Input
+                                    {...register("password")}
+                                    type="password"
+                                    placeholder="Masukkan password Anda"
+                                    className="h-12"
+                                />
                                 {errors.password && (
                                     <p className="text-sm text-red-600 mt-1">
                                         {errors.password.message}
