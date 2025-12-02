@@ -17,7 +17,6 @@ export default function SellerReports() {
             let endpoint = "";
             let filename = "";
 
-            // Menyesuaikan endpoint dengan konteks Seller
             switch (reportType) {
                 case "sales":
                     endpoint = "/dashboard/seller/reports/sales";
