@@ -71,17 +71,15 @@ export default function Catalog() {
             <Navbar />
 
             <main className="max-w-7xl mx-auto px-4 py-10 flex-1 grid grid-cols-1 md:grid-cols-4 gap-8">
-
                 {/* SIDEBAR */}
                 <aside className="md:col-span-1">
-                    <div className="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
-                        <ProductFilter
-                            initial={{}}
-                            onApply={handleApply}
-                            onReset={handleReset}
-                        />
-                    </div>
+                    <ProductFilter
+                        initial={{}}
+                        onApply={handleApply}
+                        onReset={handleReset}
+                    />
                 </aside>
+
 
                 {/* RESULT PANEL */}
                 <section className="md:col-span-3">
