@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import api from "@/lib/axios";
-import { Download, FileText, Loader } from "lucide-react";
+import { Download, Loader, User, Map, Trophy } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function AdminReports() {
     const [loading, setLoading] = useState({
@@ -19,15 +20,15 @@ export default function AdminReports() {
             switch (reportType) {
                 case "sellers":
                     endpoint = "/dashboard/admin/reports/sellers";
-                    filename = "seller-accounts-report.pdf";
+                    filename = "Laporan_Akun_Penjual.pdf";
                     break;
                 case "province":
                     endpoint = "/dashboard/admin/reports/sellers-by-province";
-                    filename = "sellers-by-province-report.pdf";
+                    filename = "Laporan_Sebaran_Penjual.pdf";
                     break;
                 case "products":
                     endpoint = "/dashboard/admin/reports/top-rated-products";
-                    filename = "top-rated-products-report.pdf";
+                    filename = "Laporan_Produk_Terbaik.pdf";
                     break;
                 default:
                     return;
@@ -47,99 +48,93 @@ export default function AdminReports() {
             a.click();
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
+            
+            toast.success("Laporan berhasil diunduh");
         } catch (error) {
-            // Log detailed server error when available to help debugging
-            if (error?.response) {
-                try {
-                    // If server returned JSON error, attempt to read it
-                    const reader = new FileReader();
-                    const blob = error.response.data;
-                    if (blob && blob instanceof Blob) {
-                        reader.onload = () => {
-                            console.error(
-                                "Download error (response):",
-                                reader.result
-                            );
-                        };
-                        reader.readAsText(blob);
-                    } else {
-                        console.error(
-                            "Download error (response):",
-                            error.response.data
-                        );
-                    }
-                } catch (e) {
-                    console.error("Download error while reading response:", e);
-                }
-            } else {
-                console.error("Download error:", error);
-            }
+            console.error("Download error:", error);
+            toast.error("Gagal mengunduh laporan");
         } finally {
             setLoading((prev) => ({ ...prev, [reportType]: false }));
         }
     };
 
-    const reportCards = [
+    const reports = [
         {
             key: "sellers",
-            title: "Seller Accounts Report",
-            description:
-                "Complete list of all sellers (active & inactive) with contact details",
-            icon: <FileText className="w-8 h-8" />,
-            color: "bg-blue-50 border-blue-200",
-            buttonColor: "bg-blue-600 hover:bg-blue-700",
+            title: "Laporan Akun Penjual",
+            description: "Daftar lengkap semua penjual (aktif & tidak aktif).",
+            columns: "Nama User, Nama PIC, Nama Toko, Status",
+            icon: <User className="w-6 h-6 text-blue-600" />,
+            iconBg: "bg-blue-100",
         },
         {
             key: "province",
-            title: "Sellers by Province Report",
-            description:
-                "Distribution of sellers across provinces with detailed breakdown",
-            icon: <FileText className="w-8 h-8" />,
-            color: "bg-green-50 border-green-200",
-            buttonColor: "bg-green-600 hover:bg-green-700",
+            title: "Laporan Sebaran Penjual",
+            description: "Distribusi penjual berdasarkan lokasi provinsi.",
+            columns: "No, Nama Toko, Nama PIC, Provinsi",
+            icon: <Map className="w-6 h-6 text-green-600" />,
+            iconBg: "bg-green-100",
         },
         {
             key: "products",
-            title: "Top Rated Products Report",
-            description:
-                "Complete list of highest rated products with store and province info",
-            icon: <FileText className="w-8 h-8" />,
-            color: "bg-purple-50 border-purple-200",
-            buttonColor: "bg-purple-600 hover:bg-purple-700",
+            title: "Laporan Produk Terbaik",
+            description: "Daftar produk dengan rating tertinggi di platform.",
+            columns: "Produk, Kategori, Harga, Rating, Toko, Provinsi",
+            icon: <Trophy className="w-6 h-6 text-purple-600" />,
+            iconBg: "bg-purple-100",
         },
     ];
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-8 pb-10 text-left">
+            {/* Header Page */}
             <div>
-                <h1 className="text-2xl font-semibold mb-2">Admin Reports</h1>
-                <p className="text-gray-600">
-                    Download PDF reports for platform analysis and management
+                <h1 className="text-2xl font-bold text-gray-800">Laporan Admin</h1>
+                <p className="text-gray-500 mt-1">
+                    Unduh laporan analisis platform dan manajemen dalam format PDF.
                 </p>
             </div>
 
+            {/* Report Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {reportCards.map((card) => (
+                {reports.map((item) => (
                     <div
-                        key={card.key}
-                        className={`${card.color} border rounded-lg p-6 flex flex-col`}
+                        key={item.key}
+                        className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm flex flex-col hover:shadow-md transition-shadow"
                     >
-                        <div className="mb-4 text-gray-700">{card.icon}</div>
-                        <h3 className="text-lg font-semibold mb-2">
-                            {card.title}
-                        </h3>
-                        <p className="text-sm text-gray-600 mb-6 flex-grow">
-                            {card.description}
+                        {/* Header Card */}
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className={`p-3 rounded-full ${item.iconBg} flex items-center justify-center`}>
+                                {item.icon}
+                            </div>
+                            <h3 className="text-lg font-bold text-gray-800 leading-tight">
+                                {item.title}
+                            </h3>
+                        </div>
+
+                        {/* Description */}
+                        <p className="text-sm text-gray-600 mb-4 h-10">
+                            {item.description}
                         </p>
+
+                        {/* Columns Info Box */}
+                        <div className="bg-gray-50 p-3 rounded-lg border border-gray-100 mb-6 flex-grow">
+                            <p className="text-xs text-gray-500 font-medium mb-1">Kolom:</p>
+                            <p className="text-xs text-gray-700 leading-relaxed">
+                                {item.columns}
+                            </p>
+                        </div>
+
+                        {/* Action Button*/}
                         <button
-                            onClick={() => downloadReport(card.key)}
-                            disabled={loading[card.key]}
-                            className={`${card.buttonColor} text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2 transition disabled:opacity-50 disabled:cursor-not-allowed`}
+                            onClick={() => downloadReport(item.key)}
+                            disabled={loading[item.key]}
+                            className="w-full py-2.5 px-4 bg-purple-600 text-white rounded-lg font-semibold text-sm flex items-center justify-center gap-2 hover:bg-purple-700 transition active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-sm"
                         >
-                            {loading[card.key] ? (
+                            {loading[item.key] ? (
                                 <>
                                     <Loader className="w-4 h-4 animate-spin" />
-                                    Generating...
+                                    Memproses...
                                 </>
                             ) : (
                                 <>
@@ -152,36 +147,27 @@ export default function AdminReports() {
                 ))}
             </div>
 
-            {/* Report Description */}
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-                <h3 className="text-lg font-semibold mb-4">
-                    Report Information
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+            {/* Information Section */}
+            <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm text-left">
+                <h3 className="text-xl font-bold text-gray-800 mb-6">Informasi Isi Laporan</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div>
-                        <h4 className="font-medium mb-2">Seller Accounts</h4>
-                        <p className="text-gray-600">
-                            Lists all sellers with their store names, emails,
-                            provinces, and activation status. Includes active
-                            and inactive sellers.
+                        <h4 className="font-bold text-gray-900 text-sm mb-2">Akun Penjual</h4>
+                        <p className="text-sm text-gray-600 leading-relaxed">
+                            Mencakup semua data kredensial penjual dan status aktivasi terkini untuk keperluan audit user.
                         </p>
                     </div>
                     <div>
-                        <h4 className="font-medium mb-2">
-                            Sellers by Province
-                        </h4>
-                        <p className="text-gray-600">
-                            Shows distribution of sellers across different
-                            provinces with detailed breakdown including store
-                            counts and contact information.
+                        <h4 className="font-bold text-gray-900 text-sm mb-2">Sebaran Provinsi</h4>
+                        <p className="text-sm text-gray-600 leading-relaxed">
+                            Analisis persebaran toko untuk pemetaan area layanan dan identifikasi wilayah potensial.
                         </p>
                     </div>
                     <div>
-                        <h4 className="font-medium mb-2">Top Rated Products</h4>
-                        <p className="text-gray-600">
-                            Displays the highest-rated products with
-                            corresponding store names, categories, prices, and
-                            customer provinces.
+                        <h4 className="font-bold text-gray-900 text-sm mb-2">Produk Terbaik</h4>
+                        <p className="text-sm text-gray-600 leading-relaxed">
+                            Highlight produk unggulan berdasarkan ulasan murni pengguna untuk strategi promosi.
                         </p>
                     </div>
                 </div>
