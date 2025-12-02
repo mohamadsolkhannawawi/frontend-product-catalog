@@ -7,12 +7,9 @@ export default function ProductCard({ product }) {
     // Primary image (atau first image jika tidak ada primary_image)
     let imageUrl = null;
 
-    // Try primary_image first
     if (product.primary_image) {
         imageUrl = product.primary_image;
-    }
-    // Then try first image from array
-    else if (
+    } else if (
         product.images &&
         Array.isArray(product.images) &&
         product.images.length > 0
@@ -20,7 +17,6 @@ export default function ProductCard({ product }) {
         imageUrl = product.images[0];
     }
 
-    // Fallback placeholder
     if (!imageUrl) {
         imageUrl = "https://via.placeholder.com/300x200?text=No+Image";
     }
@@ -30,13 +26,14 @@ export default function ProductCard({ product }) {
 
     return (
         <Link to={`/products/${product.slug}`} className="block">
-            <div className="bg-white rounded-md shadow-card overflow-hidden hover:shadow-lg transition-shadow">
+            <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all overflow-hidden">
+
                 {/* Primary Image */}
                 <div className="overflow-hidden bg-gray-100 relative">
                     <img
                         src={imageUrl}
                         alt={product.name}
-                        className="w-full h-48 object-cover hover:scale-105 transition-transform"
+                        className="w-full h-56 object-cover transition-transform duration-300 hover:scale-105"
                         onError={(e) => {
                             e.target.src =
                                 "https://via.placeholder.com/300x200?text=No+Image";
@@ -52,7 +49,8 @@ export default function ProductCard({ product }) {
                 </div>
 
                 {/* Product Info */}
-                <div className="p-3">
+                <div className="p-4">
+
                     {/* Category Badge */}
                     {product.category && product.category.name && (
                         <div className="mb-2">
@@ -63,27 +61,31 @@ export default function ProductCard({ product }) {
                     )}
 
                     {/* Nama Produk */}
-                    <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 mb-2">
+                    <h3 className="text-base font-semibold text-gray-900 leading-snug line-clamp-2 mb-1">
                         {product.name}
                     </h3>
 
+                    {/* STORE NAME (new styling like reference) */}
+                    <p className="text-sm text-gray-500 mb-1">
+                        {product.seller?.store_name}
+                    </p>
+
+                    {/* Rating */}
+                    <div className="flex items-center gap-1 mb-1">
+                        <RatingStarDisplay rating={product.average_rating} />
+                        <span className="text-sm text-gray-700 font-medium">
+                            ({product.average_rating?.toFixed(1) || "0.0"})
+                        </span>
+                    </div>
+
                     {/* Harga */}
-                    <div className="text-lg font-bold text-brand-primary mb-2">
+                    <div className="text-2xl font-bold text-brand-purple mt-2">
                         {formatCurrency(product.price)}
                     </div>
 
-                    {/* Rating & Stock */}
-                    <div className="flex items-center gap-2 mb-2">
-                        <RatingStarDisplay rating={product.average_rating} />
-                        <span className="text-xs text-gray-500">|</span>
-                        <div className="text-xs font-medium text-gray-600">
-                            {stock > 0 ? `${stock} stok` : "Habis"}
-                        </div>
-                    </div>
-
                     {/* Kota/Kabupaten */}
-                    <div className="text-xs text-gray-500 truncate">
-                        📍 {city}
+                    <div className="text-sm text-gray-500 mt-1">
+                        Kab. {city}
                     </div>
                 </div>
             </div>
