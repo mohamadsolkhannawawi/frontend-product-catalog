@@ -42,20 +42,22 @@ export default function AdminDashboard({ initialActive = "overview" }) {
     ];
 
     return (
-        <div className="min-h-screen flex bg-gray-50">
+        <div className="min-h-screen bg-gray-50">
+            {/* SIDEBAR (FIXED POSITION) */}
             <aside
-                className={`bg-white border-r transition-all duration-200 flex flex-col h-screen ${
+                className={`fixed top-0 left-0 h-screen bg-white border-r border-gray-200 transition-all duration-300 flex flex-col z-30 ${
                     collapsed ? "w-20" : "w-64"
                 }`}
             >
-                <div className="flex items-center justify-between p-4 border-b">
-                    <div className="flex items-center gap-2">
-                        <div className="text-lg font-bold">
-                            {!collapsed && "Admin"}
-                        </div>
+                {/* Header Sidebar */}
+                <div className="flex items-center justify-between p-6 border-b border-gray-100 shrink-0">
+                    <div className={`flex items-center gap-2 overflow-hidden ${collapsed ? "hidden" : "block"}`}>
+                        <span className="text-xl font-extrabold text-gray-800 tracking-tight">
+                            Admin<span className="text-purple-600">Panel</span>
+                        </span>
                     </div>
                     <button
-                        className="p-1 rounded hover:bg-gray-100"
+                        className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors"
                         onClick={() => setCollapsed((s) => !s)}
                         aria-label="Toggle sidebar"
                     >
@@ -63,44 +65,63 @@ export default function AdminDashboard({ initialActive = "overview" }) {
                     </button>
                 </div>
 
-                <nav className="flex-1 p-2">
-                    {items.map((it) => (
-                        <button
-                            key={it.key}
-                            onClick={() => setActive(it.key)}
-                            className={`w-full flex items-center gap-3 p-3 rounded hover:bg-gray-100 text-left ${
-                                active === it.key
-                                    ? "bg-gray-100 font-medium"
-                                    : ""
-                            }`}
-                        >
-                            <span className="text-brand-primary">
-                                {it.icon}
-                            </span>
-                            {!collapsed && <span>{it.label}</span>}
-                        </button>
-                    ))}
+                {/* Menu Items */}
+                <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto custom-scrollbar">
+                    {items.map((it) => {
+                        const isActive = active === it.key;
+                        return (
+                            <button
+                                key={it.key}
+                                onClick={() => setActive(it.key)}
+                                className={`group relative w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                    isActive
+                                        ? "bg-purple-50 text-purple-700"
+                                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                                }`}
+                            >
+                                {isActive && (
+                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-purple-700 rounded-r-full" />
+                                )}
+
+                                <span className={`transition-colors ${isActive ? "text-purple-700" : "text-gray-400 group-hover:text-gray-600"}`}>
+                                    {it.icon}
+                                </span>
+                                
+                                {!collapsed && (
+                                    <span className="truncate">{it.label}</span>
+                                )}
+                            </button>
+                        );
+                    })}
                 </nav>
 
-                <div className="mt-auto p-3 border-t">
+                {/* Footer / Logout Button */}
+                <div className="p-4 border-t border-gray-100 bg-white mt-auto shrink-0">
                     <div className="flex flex-col items-stretch">
-                        <div className="mb-3">
+                        <div className="mb-2">
                             <LogoutButton collapsed={collapsed} />
                         </div>
                         {!collapsed && (
-                            <div className="text-sm text-gray-600 text-center">
-                                v1.0
+                            <div className="text-xs text-gray-400 text-center mt-2">
+                                © 2025 Catalozy Admin
                             </div>
                         )}
                     </div>
                 </div>
             </aside>
 
-            <main className="flex-1 p-6">
-                {active === "overview" && <AdminOverview />}
-                {active === "approval" && <AdminSellers />}
-                {active === "management" && <AdminManagement />}
-                {active === "reports" && <AdminReports />}
+            {/* MAIN CONTENT */}
+            <main 
+                className={`min-h-screen p-8 transition-all duration-300 ${
+                    collapsed ? "ml-20" : "ml-64"
+                }`}
+            >
+                <div className="max-w-7xl mx-auto">
+                    {active === "overview" && <AdminOverview />}
+                    {active === "approval" && <AdminSellers />}
+                    {active === "management" && <AdminManagement />}
+                    {active === "reports" && <AdminReports />}
+                </div>
             </main>
         </div>
     );
@@ -111,19 +132,24 @@ function LogoutButton({ collapsed }) {
     const navigate = useNavigate();
 
     const doLogout = async () => {
-        try {
-            await auth.logout();
-        } finally {
-            navigate("/");
+        if(confirm("Apakah Anda yakin ingin keluar?")) {
+            try {
+                await auth.logout();
+            } finally {
+                navigate("/");
+            }
         }
     };
 
     return (
         <button
             onClick={doLogout}
-            className="w-full flex items-center gap-3 p-2 rounded hover:bg-gray-100 text-left text-sm text-gray-700"
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-red-600 hover:bg-red-50 ${
+                collapsed ? "justify-center" : ""
+            }`}
+            title="Logout"
         >
-            <LogOut className="w-5 h-5 text-red-600" />
+            <LogOut className="w-5 h-5" />
             {!collapsed && <span>Logout</span>}
         </button>
     );
