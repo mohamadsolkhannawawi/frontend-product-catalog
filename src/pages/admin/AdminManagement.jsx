@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "@/lib/axios";
 import { 
-    Bell, 
-    Mail, 
     Ban, 
     CheckCircle, 
     ChevronLeft, 
@@ -104,15 +102,7 @@ export default function AdminManagement() {
                         Pantau aktivitas dan status toko yang terdaftar di platform.
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
-                    <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition relative">
-                        <Bell className="w-5 h-5" />
-                        <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-                    </button>
-                    <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition">
-                        <Mail className="w-5 h-5" />
-                    </button>
-                </div>
+                {/* Tombol Notifikasi & Surat telah dihapus di sini */}
             </div>
 
             {/* Main Content Card */}

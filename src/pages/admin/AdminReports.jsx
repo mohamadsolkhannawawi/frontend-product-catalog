@@ -63,7 +63,6 @@ export default function AdminReports() {
             key: "sellers",
             title: "Laporan Akun Penjual",
             description: "Daftar lengkap semua penjual (aktif & tidak aktif).",
-            columns: "Nama User, Nama PIC, Nama Toko, Status",
             icon: <User className="w-6 h-6 text-blue-600" />,
             iconBg: "bg-blue-100",
         },
@@ -71,7 +70,6 @@ export default function AdminReports() {
             key: "province",
             title: "Laporan Sebaran Penjual",
             description: "Distribusi penjual berdasarkan lokasi provinsi.",
-            columns: "No, Nama Toko, Nama PIC, Provinsi",
             icon: <Map className="w-6 h-6 text-green-600" />,
             iconBg: "bg-green-100",
         },
@@ -79,7 +77,6 @@ export default function AdminReports() {
             key: "products",
             title: "Laporan Produk Terbaik",
             description: "Daftar produk dengan rating tertinggi di platform.",
-            columns: "Produk, Kategori, Harga, Rating, Toko, Provinsi",
             icon: <Trophy className="w-6 h-6 text-purple-600" />,
             iconBg: "bg-purple-100",
         },
@@ -113,23 +110,15 @@ export default function AdminReports() {
                         </div>
 
                         {/* Description */}
-                        <p className="text-sm text-gray-600 mb-4 h-10">
+                        <p className="text-sm text-gray-600 mb-8 flex-grow">
                             {item.description}
                         </p>
 
-                        {/* Columns Info Box */}
-                        <div className="bg-gray-50 p-3 rounded-lg border border-gray-100 mb-6 flex-grow">
-                            <p className="text-xs text-gray-500 font-medium mb-1">Kolom:</p>
-                            <p className="text-xs text-gray-700 leading-relaxed">
-                                {item.columns}
-                            </p>
-                        </div>
-
-                        {/* Action Button*/}
+                        {/* Action Button (Purple) */}
                         <button
                             onClick={() => downloadReport(item.key)}
                             disabled={loading[item.key]}
-                            className="w-full py-2.5 px-4 bg-purple-600 text-white rounded-lg font-semibold text-sm flex items-center justify-center gap-2 hover:bg-purple-700 transition active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-sm"
+                            className="w-full py-2.5 px-4 bg-purple-600 text-white rounded-lg font-semibold text-sm flex items-center justify-center gap-2 hover:bg-purple-700 transition active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-sm mt-auto"
                         >
                             {loading[item.key] ? (
                                 <>

@@ -30,13 +30,6 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            // If the failing request was the login attempt itself, don't auto-redirect
-            // so the login page can show a proper localized message.
-            const requestUrl = error.config?.url || "";
-            if (requestUrl && requestUrl.includes("/login")) {
-                return Promise.reject(error);
-            }
-
             localStorage.removeItem("auth_token");
             window.location.href = "/login";
             return Promise.reject(error);
