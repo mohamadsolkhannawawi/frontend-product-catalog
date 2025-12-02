@@ -51,19 +51,19 @@ export default function ProductCard({ product }) {
                 {/* Product Info */}
                 <div className="p-4">
 
-                    {/* Category Badge */}
-                    {product.category && product.category.name && (
-                        <div className="mb-2">
-                            <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
-                                {product.category.name}
-                            </span>
-                        </div>
-                    )}
-
                     {/* Nama Produk */}
                     <h3 className="text-base font-semibold text-gray-900 leading-snug line-clamp-2 mb-1">
                         {product.name}
                     </h3>
+
+                    {/* Category Badge */}
+                    {product.category && product.category.name && (
+                        <div className="mb-2">
+                            <span className="inline-block bg-purple-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                                {product.category.name}
+                            </span>
+                        </div>
+                    )}                    
 
                     {/* STORE NAME (new styling like reference) */}
                     <p className="text-sm text-gray-500 mb-1">

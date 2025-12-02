@@ -113,7 +113,7 @@ export default function Home() {
                     {loading ? (
                         <Loader />
                     ) : (
-                        <ProductGrid products={products} />
+                        <ProductGrid products={products} columns={4} />
                     )}
                 </section>
 
