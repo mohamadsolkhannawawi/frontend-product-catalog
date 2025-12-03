@@ -50,17 +50,18 @@ export default function Home() {
 
             {/* MAIN CONTENT */}
             <main className="max-w-7xl mx-auto px-6 flex-1">
-
                 {/* HERO SECTION */}
                 <section className="pt-16 pb-20 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
                     <div>
                         <h1 className="text-5xl font-bold text-brand-black leading-tight">
-                            Platform Katalog<br />Edukatif
+                            Platform Katalog
+                            <br />
+                            Edukatif
                         </h1>
 
                         <p className="mt-6 text-lg text-brand-gray-600 leading-relaxed max-w-xl">
-                            Desain profesional, cari produk terbaik dari toko lokal
-                            Indonesia dengan mudah dan terpercaya.
+                            Desain profesional, cari produk terbaik dari toko
+                            lokal Indonesia dengan mudah dan terpercaya.
                         </p>
 
                         <a
@@ -92,7 +93,10 @@ export default function Home() {
                                 key={idx}
                                 className="bg-white rounded-xl py-8 shadow-sm border border-gray-100 flex flex-col items-center hover:shadow-md transition"
                             >
-                                <item.icon size={40} className="text-brand-purple" />
+                                <item.icon
+                                    size={40}
+                                    className="text-brand-purple"
+                                />
                                 <p className="mt-3 text-brand-black font-medium text-base">
                                     {item.label}
                                 </p>
@@ -105,38 +109,44 @@ export default function Home() {
                 <section className="mt-24">
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-3xl font-bold">Produk Unggulan</h2>
-                        <a href="/catalog" className="text-brand-purple font-medium hover:underline">
+                        <a
+                            href="/catalog"
+                            className="text-brand-purple font-medium hover:underline"
+                        >
                             Lihat Semua
                         </a>
                     </div>
 
-                    {loading ? (
-                        <Loader />
-                    ) : (
-                        <ProductGrid products={products} />
-                    )}
+                    {loading ? <Loader /> : <ProductGrid products={products} />}
                 </section>
 
                 {/* STATISTICS SECTION */}
                 <section className="mt-28 grid grid-cols-2 md:grid-cols-4 text-center py-12 bg-white rounded-2xl shadow-sm">
                     <div>
-                        <h3 className="text-4xl font-bold text-brand-purple">10,000+</h3>
+                        <h3 className="text-4xl font-bold text-brand-purple">
+                            10,000+
+                        </h3>
                         <p className="text-gray-600 mt-2">Produk Tersedia</p>
                     </div>
                     <div>
-                        <h3 className="text-4xl font-bold text-brand-purple">1,500+</h3>
+                        <h3 className="text-4xl font-bold text-brand-purple">
+                            1,500+
+                        </h3>
                         <p className="text-gray-600 mt-2">Toko Terdaftar</p>
                     </div>
                     <div>
-                        <h3 className="text-4xl font-bold text-brand-purple">25,000+</h3>
+                        <h3 className="text-4xl font-bold text-brand-purple">
+                            25,000+
+                        </h3>
                         <p className="text-gray-600 mt-2">Pengguna Aktif</p>
                     </div>
                     <div>
-                        <h3 className="text-4xl font-bold text-brand-purple">34</h3>
+                        <h3 className="text-4xl font-bold text-brand-purple">
+                            34
+                        </h3>
                         <p className="text-gray-600 mt-2">Provinsi</p>
                     </div>
                 </section>
-
             </main>
 
             {/* PURPLE PROMOTION SECTION */}
@@ -146,7 +156,8 @@ export default function Home() {
                 </h2>
 
                 <p className="text-lg text-white opacity-95 mb-10">
-                    Jual produk lokal Anda dan jangkau lebih banyak pembeli di seluruh Indonesia
+                    Jual produk lokal Anda dan jangkau lebih banyak pembeli di
+                    seluruh Indonesia
                 </p>
 
                 <div className="flex justify-center gap-6">

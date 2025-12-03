@@ -54,9 +54,7 @@ export default function ProductDetail() {
         setCurrentImageIndex((i) => (i === 0 ? images.length - 1 : i - 1));
 
     const goNext = () =>
-        setCurrentImageIndex((i) =>
-            i === images.length - 1 ? 0 : i + 1
-        );
+        setCurrentImageIndex((i) => (i === images.length - 1 ? 0 : i + 1));
 
     const formatCurrency = (value) =>
         new Intl.NumberFormat("id-ID", {
@@ -79,13 +77,10 @@ export default function ProductDetail() {
             <Navbar />
 
             <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-10">
-
                 {/* MAIN GRID – Follows entire page */}
                 <div className="grid grid-cols-1 lg:grid-cols-[1.4fr,1fr] gap-10">
-
                     {/* LEFT SIDE – Scrolls normally */}
                     <div className="space-y-10">
-
                         {/* IMAGE PANEL */}
                         <div className="bg-white rounded-2xl shadow-sm p-4">
                             <div className="relative aspect-square bg-gray-50 rounded-xl flex items-center justify-center">
@@ -119,14 +114,19 @@ export default function ProductDetail() {
                                     {images.map((img, idx) => (
                                         <button
                                             key={idx}
-                                            onClick={() => setCurrentImageIndex(idx)}
+                                            onClick={() =>
+                                                setCurrentImageIndex(idx)
+                                            }
                                             className={`h-20 w-28 rounded-xl overflow-hidden border-2 ${
                                                 idx === currentImageIndex
                                                     ? "border-purple-500"
                                                     : "border-gray-200"
                                             }`}
                                         >
-                                            <img src={img} className="w-full h-full object-cover" />
+                                            <img
+                                                src={img}
+                                                className="w-full h-full object-cover"
+                                            />
                                         </button>
                                     ))}
                                 </div>
@@ -135,63 +135,74 @@ export default function ProductDetail() {
 
                         {/* PRODUCT INFO PANEL (NAME + RATING + DESCRIPTION + LOCATION in one panel) */}
                         <div className="bg-white rounded-2xl text-left shadow-sm p-8 space-y-8">
+                            {/* Name */}
+                            <h1 className="text-4xl font-bold text-gray-900">
+                                {product.name}
+                            </h1>
 
-                        {/* Name */}
-                        <h1 className="text-4xl font-bold text-gray-900">
-                            {product.name}
-                        </h1>
+                            {/* Rating */}
+                            <div className="flex items-center gap-3">
+                                <RatingStarDisplay
+                                    rating={product.average_rating || 0}
+                                />
+                                <span className="text-gray-700 text-lg font-medium">
+                                    {product.average_rating?.toFixed(1) ||
+                                        "0.0"}
+                                </span>
+                            </div>
 
-                        {/* Rating */}
-                        <div className="flex items-center gap-3">
-                            <RatingStarDisplay rating={product.average_rating || 0} />
-                            <span className="text-gray-700 text-lg font-medium">
-                                {product.average_rating?.toFixed(1) || "0.0"}
-                            </span>
-                        </div>
+                            {/* Description */}
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                                    Deskripsi
+                                </h2>
+                                <p className="text-gray-700 leading-relaxed">
+                                    {product.description}
+                                </p>
+                            </div>
 
-                        {/* Description */}
-                        <div>
-                            <h2 className="text-2xl font-bold text-gray-900 mb-3">Deskripsi</h2>
-                            <p className="text-gray-700 leading-relaxed">
-                                {product.description}
-                            </p>
-                        </div>
+                            {/* LOCATION PANEL — nested */}
+                            <div className="bg-gray-50 rounded-xl border border-gray-200 p-6">
+                                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                                    Detail Lokasi
+                                </h3>
 
-                        {/* LOCATION PANEL — nested */}
-                        <div className="bg-gray-50 rounded-xl border border-gray-200 p-6">
-                            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                                Detail Lokasi
-                            </h3>
+                                <div className="space-y-4">
+                                    {/* Kota/Kabupaten Row */}
+                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                                        <span className="text-gray-600 font-medium">
+                                            Kota/Kabupaten
+                                        </span>
+                                        <span className="text-gray-900 font-bold">
+                                            {product.seller?.city?.toUpperCase() ||
+                                                "-"}
+                                        </span>
+                                    </div>
 
-                            <div className="space-y-4">
-
-                                {/* Kota/Kabupaten Row */}
-                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                                    <span className="text-gray-600 font-medium">Kota/Kabupaten</span>
-                                    <span className="text-gray-900 font-bold">
-                                        {product.seller?.city?.toUpperCase() || "-"}
-                                    </span>
+                                    {/* Provinsi Row */}
+                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                                        <span className="text-gray-600 font-medium">
+                                            Provinsi
+                                        </span>
+                                        <span className="text-gray-900 font-bold">
+                                            {product.seller?.province?.toUpperCase() ||
+                                                "-"}
+                                        </span>
+                                    </div>
                                 </div>
-
-                                {/* Provinsi Row */}
-                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                                    <span className="text-gray-600 font-medium">Provinsi</span>
-                                    <span className="text-gray-900 font-bold">
-                                        {product.seller?.province?.toUpperCase() || "-"}
-                                    </span>
-                                </div>
-
                             </div>
                         </div>
 
-                        </div>
-
-
                         {/* REVIEWS */}
                         <div className="bg-white rounded-2xl shadow-sm p-8">
-                            <h2 className="text-2xl font-bold mb-6">Ulasan Pembeli</h2>
+                            <h2 className="text-2xl font-bold mb-6">
+                                Ulasan Pembeli
+                            </h2>
 
-                            <ReviewList slug={product.slug} refreshSignal={reviewRefresh} />
+                            <ReviewList
+                                slug={product.slug}
+                                refreshSignal={reviewRefresh}
+                            />
 
                             <div className="mt-10 border-t pt-8">
                                 <h3 className="text-xl font-semibold mb-4">
@@ -199,7 +210,9 @@ export default function ProductDetail() {
                                 </h3>
                                 <ReviewForm
                                     productId={product.product_id}
-                                    onSuccess={() => setReviewRefresh((v) => v + 1)}
+                                    onSuccess={() =>
+                                        setReviewRefresh((v) => v + 1)
+                                    }
                                 />
                             </div>
                         </div>
@@ -207,9 +220,7 @@ export default function ProductDetail() {
 
                     {/* RIGHT SIDE – Sticky Price Panel */}
                     <div className="lg:sticky lg:top-24 h-fit">
-
                         <div className="bg-white rounded-2xl shadow-lg p-8">
-
                             {/* PRICE */}
                             <div className="text-4xl font-bold text-gray-900">
                                 {formatCurrency(product.price)}
@@ -223,11 +234,15 @@ export default function ProductDetail() {
                             <div className="my-6 border-b"></div>
 
                             {/* SELLER INFO */}
-                            <div className="text-sm font-semibold text-gray-600 mb-2">Penjual</div>
+                            <div className="text-sm font-semibold text-gray-600 mb-2">
+                                Penjual
+                            </div>
 
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-lg">
-                                    {product.seller?.store_name?.substring(0, 2).toUpperCase() || "TN"}
+                                    {product.seller?.store_name
+                                        ?.substring(0, 2)
+                                        .toUpperCase() || "TN"}
                                 </div>
 
                                 <div>
@@ -249,7 +264,6 @@ export default function ProductDetail() {
                                 <MessageCircle className="w-6 h-6" />
                                 Hubungi Penjual via WhatsApp
                             </button>
-
                         </div>
                     </div>
                 </div>

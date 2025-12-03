@@ -12,7 +12,9 @@ const Navbar = () => {
         if (e.type === "click" || (e.type === "keydown" && e.key === "Enter")) {
             e.preventDefault();
             if (searchQuery.trim()) {
-                navigate(`/catalog?q=${encodeURIComponent(searchQuery.trim())}`);
+                navigate(
+                    `/catalog?q=${encodeURIComponent(searchQuery.trim())}`
+                );
             }
         }
     };
@@ -21,7 +23,6 @@ const Navbar = () => {
         <nav className="sticky top-0 z-50 bg-white border-b border-gray-200/70">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex items-center justify-between h-14">
-                    
                     {/* LOGO */}
                     <Link to="/" className="flex items-center gap-2">
                         <span className="text-[26px] font-extrabold tracking-tight bg-gradient-to-r from-purple-700 to-purple-500 bg-clip-text text-transparent">

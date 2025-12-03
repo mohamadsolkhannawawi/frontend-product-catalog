@@ -51,7 +51,11 @@ export default function AdminDashboard({ initialActive = "overview" }) {
             >
                 {/* Header Sidebar */}
                 <div className="flex items-center justify-between p-6 border-b border-gray-100 shrink-0">
-                    <div className={`flex items-center gap-2 overflow-hidden ${collapsed ? "hidden" : "block"}`}>
+                    <div
+                        className={`flex items-center gap-2 overflow-hidden ${
+                            collapsed ? "hidden" : "block"
+                        }`}
+                    >
                         <span className="text-xl font-extrabold text-gray-800 tracking-tight">
                             Admin<span className="text-purple-600">Panel</span>
                         </span>
@@ -83,10 +87,16 @@ export default function AdminDashboard({ initialActive = "overview" }) {
                                     <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-purple-700 rounded-r-full" />
                                 )}
 
-                                <span className={`transition-colors ${isActive ? "text-purple-700" : "text-gray-400 group-hover:text-gray-600"}`}>
+                                <span
+                                    className={`transition-colors ${
+                                        isActive
+                                            ? "text-purple-700"
+                                            : "text-gray-400 group-hover:text-gray-600"
+                                    }`}
+                                >
                                     {it.icon}
                                 </span>
-                                
+
                                 {!collapsed && (
                                     <span className="truncate">{it.label}</span>
                                 )}
@@ -111,7 +121,7 @@ export default function AdminDashboard({ initialActive = "overview" }) {
             </aside>
 
             {/* MAIN CONTENT */}
-            <main 
+            <main
                 className={`min-h-screen p-8 transition-all duration-300 ${
                     collapsed ? "ml-20" : "ml-64"
                 }`}
@@ -132,7 +142,7 @@ function LogoutButton({ collapsed }) {
     const navigate = useNavigate();
 
     const doLogout = async () => {
-        if(confirm("Apakah Anda yakin ingin keluar?")) {
+        if (confirm("Apakah Anda yakin ingin keluar?")) {
             try {
                 await auth.logout();
             } finally {
