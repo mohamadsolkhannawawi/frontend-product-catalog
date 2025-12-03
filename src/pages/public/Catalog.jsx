@@ -67,9 +67,11 @@ export default function Catalog() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col bg-[#F5F6FA]">
             <Navbar />
-            <main className="max-w-6xl mx-auto px-4 py-8 flex-1 grid grid-cols-1 md:grid-cols-4 gap-6">
+
+            <main className="max-w-7xl mx-auto px-4 py-10 flex-1 grid grid-cols-1 md:grid-cols-4 gap-8">
+                {/* SIDEBAR */}
                 <aside className="md:col-span-1">
                     <ProductFilter
                         initial={{}}
@@ -78,25 +80,41 @@ export default function Catalog() {
                     />
                 </aside>
 
+
+                {/* RESULT PANEL */}
                 <section className="md:col-span-3">
-                    <header className="mb-4">
-                        <h1 className="text-2xl font-bold">Hasil Pencarian</h1>
+                    <header className="mb-6">
+                        <h1 className="text-2xl font-bold text-gray-900">
+                            Hasil Pencarian
+                        </h1>
+
                         {q && (
-                            <p className="text-sm text-brand-gray-500 mt-1">
-                                Menampilkan hasil untuk "{q}"
+                            <p className="text-sm text-gray-500 mt-1">
+                                Menampilkan hasil untuk "<span className="font-semibold">{q}</span>"
                             </p>
                         )}
                     </header>
 
-                    {loading ? <Loader /> : <ProductGrid products={products} />}
+                    {/* CARD GRID */}
+                    <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        {loading ? (
+                            <Loader />
+                        ) : (
+                            <ProductGrid products={products} columns={3} />
+                        )}
+                    </div>
 
-                    <Pagination
-                        currentPage={currentPage}
-                        lastPage={lastPage}
-                        onChange={handlePage}
-                    />
+                    {/* PAGINATION */}
+                    <div className="mt-6 flex justify-center">
+                        <Pagination
+                            currentPage={currentPage}
+                            lastPage={lastPage}
+                            onChange={handlePage}
+                        />
+                    </div>
                 </section>
             </main>
+
             <Footer />
         </div>
     );
