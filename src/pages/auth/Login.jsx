@@ -10,6 +10,7 @@ import Button from "@/components/common/Button";
 import { useAuth } from "@/context/AuthContext";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import logo from "@/assets/images/logo/logo-catalozy.svg";
 
 const schema = z.object({
     email: z.string().min(1, "Email wajib diisi").email("Email tidak valid"),
@@ -72,7 +73,17 @@ export default function Login() {
                 <div className="w-full max-w-md">
                     {/* Header */}
                     <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                        <div className="flex items-center justify-center gap-3 mb-4">
+                            <img
+                                src={logo}
+                                alt="Catalozy"
+                                className="h-16 w-auto"
+                            />
+                            <span className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-purple-700 to-purple-500 bg-clip-text text-transparent">
+                                Catalozy
+                            </span>
+                        </div>
+                        <h1 className="text-2xl font-semibold text-gray-900 mb-2">
                             Selamat Datang Kembali
                         </h1>
                         <p className="text-gray-600">

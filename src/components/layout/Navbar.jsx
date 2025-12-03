@@ -2,6 +2,7 @@ import { Search, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "@/components/common/Input";
 import { useState } from "react";
+import logo from "@/assets/images/logo/logo-catalozy.svg";
 
 const Navbar = () => {
     const isLoggedIn = false; // replace with actual auth
@@ -25,6 +26,7 @@ const Navbar = () => {
                 <div className="flex items-center justify-between h-14">
                     {/* LOGO */}
                     <Link to="/" className="flex items-center gap-2">
+                        <img src={logo} alt="Catalozy" className="h-8 w-auto" />
                         <span className="text-[26px] font-extrabold tracking-tight bg-gradient-to-r from-purple-700 to-purple-500 bg-clip-text text-transparent">
                             Catalozy
                         </span>
