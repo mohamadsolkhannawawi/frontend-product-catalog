@@ -1,45 +1,57 @@
 import { Link } from "react-router-dom";
+import { Instagram, Twitter, Mail } from "lucide-react";
 
 const Footer = () => {
+    const year = new Date().getFullYear();
     return (
-        <footer className="bg-secondary text-secondary-foreground mt-16">
-            <div className="container mx-auto px-4 py-12">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    {/* About */}
+        <footer
+            style={{ background: "#2b2c40" }}
+            className="text-gray-100 mt-16"
+        >
+            <div className="max-w-7xl mx-auto px-6 py-12">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+                    {/* Column 1: Brand */}
                     <div>
-                        <h3 className="font-bold text-lg mb-4">
-                            About Catalozy
-                        </h3>
-                        <ul className="space-y-2 text-sm opacity-90">
-                            <li>
-                                <Link to="/about" className="hover:opacity-100">
-                                    About Us
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    to="/careers"
-                                    className="hover:opacity-100"
-                                >
-                                    Careers
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/press" className="hover:opacity-100">
-                                    Press
-                                </Link>
-                            </li>
-                        </ul>
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="text-2xl font-extrabold">
+                                Catalozy
+                            </div>
+                        </div>
+                        <div className="text-sm text-gray-200 font-semibold mb-2">
+                            Katalog Produk Andalan GenZ
+                        </div>
+                        <p className="text-sm text-gray-300 leading-relaxed">
+                            Catalozy adalah Katalog Edukatif untuk produk lokal
+                            katalog terkurasi yang menonjolkan transparansi
+                            harga, ketersediaan stok, lokasi penjual, dan ulasan
+                            jujur. Kami mendukung UMKM untuk tampil lebih
+                            profesional dan membantu pembeli membuat keputusan
+                            yang lebih cerdas.
+                        </p>
+                        <p className="text-xs text-gray-400 mt-3">
+                            Penjual diverifikasi manual untuk menjaga
+                            kepercayaan.
+                        </p>
                     </div>
 
-                    {/* Categories */}
+                    {/* Column 2: Explore */}
                     <div>
-                        <h3 className="font-bold text-lg mb-4">Categories</h3>
-                        <ul className="space-y-2 text-sm opacity-90">
+                        <h4 className="font-semibold text-gray-100 mb-4">
+                            Jelajahi
+                        </h4>
+                        <ul className="space-y-2 text-sm text-gray-300">
+                            <li>
+                                <Link
+                                    to="/catalog"
+                                    className="hover:text-purple-300"
+                                >
+                                    Katalog
+                                </Link>
+                            </li>
                             <li>
                                 <Link
                                     to="/catalog?category=fashion"
-                                    className="hover:opacity-100"
+                                    className="hover:text-purple-300"
                                 >
                                     Fashion
                                 </Link>
@@ -47,89 +59,143 @@ const Footer = () => {
                             <li>
                                 <Link
                                     to="/catalog?category=electronics"
-                                    className="hover:opacity-100"
+                                    className="hover:text-purple-300"
                                 >
-                                    Electronics
+                                    Elektronik
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    to="/catalog?category=food"
-                                    className="hover:opacity-100"
+                                    to="/catalog?sort=top"
+                                    className="hover:text-purple-300"
                                 >
-                                    Food & Beverage
+                                    Produk Terlaris
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    to="/catalog?category=crafts"
-                                    className="hover:opacity-100"
+                                    to="/search"
+                                    className="hover:text-purple-300"
                                 >
-                                    Handmade Crafts
+                                    Cari Produk
                                 </Link>
                             </li>
                         </ul>
                     </div>
 
-                    {/* Support */}
+                    {/* Column 3: Sellers */}
                     <div>
-                        <h3 className="font-bold text-lg mb-4">Support</h3>
-                        <ul className="space-y-2 text-sm opacity-90">
+                        <h4 className="font-semibold text-gray-100 mb-4">
+                            Bergabung Bersama Kami
+                        </h4>
+                        <ul className="space-y-2 text-sm text-gray-300">
                             <li>
-                                <Link to="/help" className="hover:opacity-100">
-                                    Help Center
+                                <Link
+                                    to="/register"
+                                    className="hover:text-purple-300"
+                                >
+                                    Daftar sebagai Penjual
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    to="/contact"
-                                    className="hover:opacity-100"
+                                    to="/guide"
+                                    className="hover:text-purple-300"
                                 >
-                                    Contact Us
+                                    Panduan Penjual
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    to="/seller"
-                                    className="hover:opacity-100"
+                                    to="/login"
+                                    className="hover:text-purple-300"
                                 >
-                                    Become a Seller
+                                    Masuk Penjual
                                 </Link>
                             </li>
                         </ul>
                     </div>
 
-                    {/* Legal */}
+                    {/* Column 4: Support */}
                     <div>
-                        <h3 className="font-bold text-lg mb-4">Legal</h3>
-                        <ul className="space-y-2 text-sm opacity-90">
+                        <h4 className="font-semibold text-gray-100 mb-4">
+                            Bantuan
+                        </h4>
+                        <ul className="space-y-2 text-sm text-gray-300">
                             <li>
-                                <Link to="/terms" className="hover:opacity-100">
-                                    Terms of Service
+                                <Link
+                                    to="/help"
+                                    className="hover:text-purple-300"
+                                >
+                                    Pusat Bantuan
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/terms"
+                                    className="hover:text-purple-300"
+                                >
+                                    Syarat & Ketentuan
                                 </Link>
                             </li>
                             <li>
                                 <Link
                                     to="/privacy"
-                                    className="hover:opacity-100"
+                                    className="hover:text-purple-300"
                                 >
-                                    Privacy Policy
+                                    Kebijakan Privasi
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    to="/refund"
-                                    className="hover:opacity-100"
+                                    to="/contact"
+                                    className="hover:text-purple-300"
                                 >
-                                    Refund Policy
+                                    Hubungi Kami
                                 </Link>
                             </li>
                         </ul>
                     </div>
                 </div>
 
-                <div className="border-t border-border/20 mt-8 pt-8 text-center text-sm opacity-75">
-                    <p>© 2025 Catalozy, Inc. All rights reserved.</p>
+                <div className="border-t border-white/10 mt-8 pt-6">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="text-sm text-gray-400">
+                            © {year} Catalozy, All Rights Reserved.
+                        </div>
+                        <div className="text-sm text-gray-400">
+                            Dibuat dengan bangga oleh Tim Catalozy
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <a
+                                href="https://instagram.com"
+                                aria-label="Instagram"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-gray-300 hover:text-purple-300"
+                            >
+                                <Instagram size={20} aria-hidden />
+                            </a>
+                            <a
+                                href="mailto:hello@catalozy.id"
+                                aria-label="Email"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-gray-300 hover:text-purple-300"
+                            >
+                                <Mail size={20} aria-hidden />
+                            </a>
+                            <a
+                                href="https://twitter.com"
+                                aria-label="X"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-gray-300 hover:text-purple-300"
+                            >
+                                <Twitter size={20} aria-hidden />
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </footer>

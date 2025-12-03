@@ -124,62 +124,10 @@ export default function Home() {
                     )}
                 </section>
 
-                {/* STATISTICS SECTION */}
-                <section className="mt-28 grid grid-cols-2 md:grid-cols-4 text-center py-12 bg-white rounded-2xl shadow-sm">
-                    <div>
-                        <h3 className="text-4xl font-bold text-brand-purple">
-                            10,000+
-                        </h3>
-                        <p className="text-gray-600 mt-2">Produk Tersedia</p>
-                    </div>
-                    <div>
-                        <h3 className="text-4xl font-bold text-brand-purple">
-                            1,500+
-                        </h3>
-                        <p className="text-gray-600 mt-2">Toko Terdaftar</p>
-                    </div>
-                    <div>
-                        <h3 className="text-4xl font-bold text-brand-purple">
-                            25,000+
-                        </h3>
-                        <p className="text-gray-600 mt-2">Pengguna Aktif</p>
-                    </div>
-                    <div>
-                        <h3 className="text-4xl font-bold text-brand-purple">
-                            34
-                        </h3>
-                        <p className="text-gray-600 mt-2">Provinsi</p>
-                    </div>
-                </section>
+                {/* (Statistics removed per request) */}
             </main>
 
-            {/* PURPLE PROMOTION SECTION */}
-            <section className="mt-28 bg-brand-purple text-white py-20 text-center">
-                <h2 className="text-4xl font-extrabold text-white mb-4">
-                    Bergabung Sebagai Penjual
-                </h2>
-
-                <p className="text-lg text-white opacity-95 mb-10">
-                    Jual produk lokal Anda dan jangkau lebih banyak pembeli di
-                    seluruh Indonesia
-                </p>
-
-                <div className="flex justify-center gap-6">
-                    <a
-                        href="/register-seller"
-                        className="bg-white text-brand-purple font-medium px-8 py-3 rounded-lg shadow hover:bg-gray-100 transition"
-                    >
-                        Daftar Sebagai Penjual
-                    </a>
-
-                    <a
-                        href="/learn-more"
-                        className="border border-white px-8 py-3 rounded-lg font-medium hover:bg-white hover:text-brand-purple transition"
-                    >
-                        Pelajari Lebih Lanjut
-                    </a>
-                </div>
-            </section>
+            {/* (Seller promotion removed per request) */}
 
             {/* FOOTER */}
             <Footer />

@@ -7,20 +7,32 @@ import RegisterSeller from "@/pages/seller/RegisterSeller";
 import SellerVerified from "@/pages/seller/Verified";
 import Register from "@/pages/auth/Register";
 import Login from "@/pages/auth/Login";
+import Guide from "@/pages/public/Guide";
+import Help from "@/pages/public/Help";
+import Terms from "@/pages/public/Terms";
+import Privacy from "@/pages/public/Privacy";
+import Contact from "@/pages/public/Contact";
 import SellerDashboard from "@/pages/seller/Dashboard";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import SellerProducts from "@/pages/seller/SellerProducts";
 import ProductForm from "@/pages/seller/ProductForm";
+import ScrollToTop from "@/components/ScrollToTop";
 
 export default function AppRoutes() {
     return (
         <BrowserRouter>
+            <ScrollToTop />
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/catalog" element={<Catalog />} />
                 <Route path="/products/:slug" element={<ProductDetail />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/guide" element={<Guide />} />
+                <Route path="/help" element={<Help />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/contact" element={<Contact />} />
                 <Route path="/seller/register" element={<RegisterSeller />} />
                 <Route path="/seller/verified" element={<SellerVerified />} />
                 <Route
