@@ -117,7 +117,11 @@ export default function Home() {
                         </a>
                     </div>
 
-                    {loading ? <Loader /> : <ProductGrid products={products} />}
+                    {loading ? (
+                        <Loader />
+                    ) : (
+                        <ProductGrid products={products} columns={4} />
+                    )}
                 </section>
 
                 {/* STATISTICS SECTION */}

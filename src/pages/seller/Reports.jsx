@@ -1,198 +1,164 @@
 import React, { useState } from "react";
-import { Download, Loader } from "lucide-react";
 import api from "@/lib/axios";
+import { Download, Loader, ShoppingBag, Package, Star } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function SellerReports() {
-    const [loading, setLoading] = useState(null);
+    const [loading, setLoading] = useState({
+        sales: false,
+        stock: false,
+        reviews: false,
+    });
 
-    const downloadReport = async (reportType, reportName) => {
-        setLoading(reportType);
+    const downloadReport = async (reportType) => {
         try {
-            const response = await api.get(
-                `/dashboard/seller/reports/${reportType}?format=pdf`,
-                { responseType: "blob" }
-            );
+            setLoading((prev) => ({ ...prev, [reportType]: true }));
 
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement("a");
-            link.href = url;
-            link.setAttribute("download", `${reportName}.pdf`);
-            document.body.appendChild(link);
-            link.click();
-            link.parentNode.removeChild(link);
+            let endpoint = "";
+            let filename = "";
+
+            switch (reportType) {
+                case "sales":
+                    endpoint = "/dashboard/seller/reports/sales";
+                    filename = "Laporan_Penjualan.pdf";
+                    break;
+                case "stock":
+                    endpoint = "/dashboard/seller/reports/stock";
+                    filename = "Laporan_Stok_Produk.pdf";
+                    break;
+                case "reviews":
+                    endpoint = "/dashboard/seller/reports/reviews";
+                    filename = "Laporan_Ulasan_Produk.pdf";
+                    break;
+                default:
+                    return;
+            }
+
+            const response = await api.get(endpoint, {
+                params: { format: "pdf" },
+                responseType: "blob",
+            });
+
+            const blob = response.data;
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
             window.URL.revokeObjectURL(url);
-
-            toast.success(`${reportName} berhasil diunduh`);
+            document.body.removeChild(a);
+            
+            toast.success("Laporan berhasil diunduh");
         } catch (error) {
-            console.error(error);
+            console.error("Download error:", error);
             toast.error("Gagal mengunduh laporan");
         } finally {
-            setLoading(null);
+            setLoading((prev) => ({ ...prev, [reportType]: false }));
         }
     };
 
+    const reports = [
+        {
+            key: "sales",
+            title: "Laporan Penjualan",
+            description: "Rekapitulasi transaksi penjualan yang berhasil, termasuk pendapatan dan status pesanan.",
+            icon: <ShoppingBag className="w-6 h-6 text-blue-600" />,
+            iconBg: "bg-blue-100",
+        },
+        {
+            key: "stock",
+            title: "Laporan Stok Produk",
+            description: "Analisis ketersediaan stok produk saat ini untuk perencanaan restock barang.",
+            icon: <Package className="w-6 h-6 text-green-600" />,
+            iconBg: "bg-green-100",
+        },
+        {
+            key: "reviews",
+            title: "Laporan Ulasan & Rating",
+            description: "Daftar ulasan pelanggan beserta rating untuk mengevaluasi kepuasan pembeli.",
+            icon: <Star className="w-6 h-6 text-yellow-600" />,
+            iconBg: "bg-yellow-100",
+        },
+    ];
+
     return (
-        <div className="p-8">
-            <div className="max-w-6xl mx-auto">
-                <h1 className="text-3xl font-bold mb-8">Laporan Penjual</h1>
+        <div className="space-y-8 pb-10 text-left">
+            {/* Header Page */}
+            <div>
+                <h1 className="text-2xl font-bold text-gray-800">Laporan Toko</h1>
+                <p className="text-gray-500 mt-1">
+                    Unduh laporan kinerja toko dan penjualan Anda dalam format PDF.
+                </p>
+            </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Report 1: Stock */}
-                    <div className="bg-white rounded-lg shadow-md p-6">
-                        <div className="mb-4">
-                            <h2 className="text-xl font-semibold mb-2">
-                                Laporan Stok Produk
-                            </h2>
-                            <p className="text-sm text-gray-600 mb-4">
-                                Daftar produk diurutkan dari stok terbanyak
-                            </p>
-                            <div className="bg-blue-50 p-3 rounded text-xs text-gray-700 space-y-1">
-                                <p>
-                                    <strong>Kolom:</strong>
-                                </p>
-                                <p>
-                                    No, Nama Produk, Rating, Kategori, Harga,
-                                    Stok
-                                </p>
+            {/* Report Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {reports.map((item) => (
+                    <div
+                        key={item.key}
+                        className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm flex flex-col hover:shadow-md transition-shadow"
+                    >
+                        {/* Header Card */}
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className={`p-3 rounded-full ${item.iconBg} flex items-center justify-center`}>
+                                {item.icon}
                             </div>
+                            <h3 className="text-lg font-bold text-gray-800 leading-tight">
+                                {item.title}
+                            </h3>
                         </div>
+
+                        {/* Description */}
+                        <p className="text-sm text-gray-600 mb-8 flex-grow leading-relaxed">
+                            {item.description}
+                        </p>
+
+                        {/* Action Button (Purple) */}
                         <button
-                            onClick={() =>
-                                downloadReport("stock", "Laporan-Stok-Produk")
-                            }
-                            disabled={loading === "stock"}
-                            className="w-full btn-primary inline-flex items-center justify-center gap-2"
+                            onClick={() => downloadReport(item.key)}
+                            disabled={loading[item.key]}
+                            className="w-full py-2.5 px-4 bg-purple-600 text-white rounded-lg font-semibold text-sm flex items-center justify-center gap-2 hover:bg-purple-700 transition active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-sm mt-auto"
                         >
-                            {loading === "stock" ? (
+                            {loading[item.key] ? (
                                 <>
-                                    <Loader
-                                        size={16}
-                                        className="animate-spin"
-                                    />
-                                    Downloading...
+                                    <Loader className="w-4 h-4 animate-spin" />
+                                    Memproses...
                                 </>
                             ) : (
                                 <>
-                                    <Download size={16} />
+                                    <Download className="w-4 h-4" />
                                     Download PDF
                                 </>
                             )}
                         </button>
                     </div>
+                ))}
+            </div>
 
-                    {/* Report 2: Rating */}
-                    <div className="bg-white rounded-lg shadow-md p-6">
-                        <div className="mb-4">
-                            <h2 className="text-xl font-semibold mb-2">
-                                Laporan Rating Produk
-                            </h2>
-                            <p className="text-sm text-gray-600 mb-4">
-                                Daftar produk diurutkan dari rating tertinggi
-                            </p>
-                            <div className="bg-blue-50 p-3 rounded text-xs text-gray-700 space-y-1">
-                                <p>
-                                    <strong>Kolom:</strong>
-                                </p>
-                                <p>
-                                    No, Nama Produk, Stok, Kategori, Harga,
-                                    Rating
-                                </p>
-                            </div>
-                        </div>
-                        <button
-                            onClick={() =>
-                                downloadReport(
-                                    "top-rated",
-                                    "Laporan-Rating-Produk"
-                                )
-                            }
-                            disabled={loading === "top-rated"}
-                            className="w-full btn-primary inline-flex items-center justify-center gap-2"
-                        >
-                            {loading === "top-rated" ? (
-                                <>
-                                    <Loader
-                                        size={16}
-                                        className="animate-spin"
-                                    />
-                                    Downloading...
-                                </>
-                            ) : (
-                                <>
-                                    <Download size={16} />
-                                    Download PDF
-                                </>
-                            )}
-                        </button>
+            {/* Information Section */}
+            <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm text-left">
+                <h3 className="text-xl font-bold text-gray-800 mb-6">Informasi Isi Laporan</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div>
+                        <h4 className="font-bold text-gray-900 text-sm mb-2">Riwayat Penjualan</h4>
+                        <p className="text-sm text-gray-600 leading-relaxed">
+                            Data lengkap mengenai transaksi yang telah selesai, dibatalkan, atau sedang diproses untuk pembukuan keuangan.
+                        </p>
                     </div>
-
-                    {/* Report 3: Restock */}
-                    <div className="bg-white rounded-lg shadow-md p-6">
-                        <div className="mb-4">
-                            <h2 className="text-xl font-semibold mb-2">
-                                Laporan Segera Dipesan
-                            </h2>
-                            <p className="text-sm text-gray-600 mb-4">
-                                Produk dengan stok menipis
-                            </p>
-                            <div className="bg-red-50 p-3 rounded text-xs text-gray-700 space-y-1">
-                                <p>
-                                    <strong>Kolom:</strong>
-                                </p>
-                                <p>No, Nama Produk, Kategori, Harga, Stok</p>
-                                <p className="text-red-600 mt-1">
-                                    Kondisi: Stok minimal 2
-                                </p>
-                            </div>
-                        </div>
-                        <button
-                            onClick={() =>
-                                downloadReport(
-                                    "restock",
-                                    "Laporan-Segera-Dipesan"
-                                )
-                            }
-                            disabled={loading === "restock"}
-                            className="w-full btn-primary inline-flex items-center justify-center gap-2"
-                        >
-                            {loading === "restock" ? (
-                                <>
-                                    <Loader
-                                        size={16}
-                                        className="animate-spin"
-                                    />
-                                    Downloading...
-                                </>
-                            ) : (
-                                <>
-                                    <Download size={16} />
-                                    Download PDF
-                                </>
-                            )}
-                        </button>
+                    <div>
+                        <h4 className="font-bold text-gray-900 text-sm mb-2">Manajemen Stok</h4>
+                        <p className="text-sm text-gray-600 leading-relaxed">
+                            Informasi detail mengenai jumlah stok fisik vs stok sistem untuk menghindari overselling.
+                        </p>
                     </div>
-                </div>
-
-                <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-                    <h3 className="font-semibold text-blue-900 mb-2">
-                        Info Laporan
-                    </h3>
-                    <ul className="text-sm text-blue-800 space-y-2">
-                        <li>
-                            - Laporan Stok: Semua produk diurutkan dari stok
-                            terbanyak
-                        </li>
-                        <li>
-                            - Laporan Rating: Semua produk diurutkan dari rating
-                            tertinggi
-                        </li>
-                        <li>
-                            - Laporan Segera Dipesan: Produk dengan stok menipis
-                            untuk peringatan restock
-                        </li>
-                        <li>- Semua laporan dapat diunduh dalam format PDF</li>
-                    </ul>
+                    <div>
+                        <h4 className="font-bold text-gray-900 text-sm mb-2">Kepuasan Pelanggan</h4>
+                        <p className="text-sm text-gray-600 leading-relaxed">
+                            Ringkasan performa toko berdasarkan feedback pelanggan untuk meningkatkan kualitas layanan.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

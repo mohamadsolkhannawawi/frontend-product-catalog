@@ -200,14 +200,23 @@ export default function ProductFilter({ initial = {}, onApply, onReset }) {
                 </select>
             </div>
 
-            <div className="flex gap-2">
-                <button type="submit" className="btn-primary">
-                    Terapkan
-                </button>
-                <button type="button" onClick={reset} className="btn-secondary">
-                    Reset
-                </button>
-            </div>
+            <div className="mt-4 flex justify-between gap-2">
+            <button
+                type="submit"
+                className="btn-primary w-full"
+            >
+                Terapkan
+            </button>
+
+            <button
+                type="button"
+                onClick={reset}
+                className="btn-secondary w-full"
+            >
+                Reset
+            </button>
+        </div>
+
         </form>
     );
 }
