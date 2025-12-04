@@ -76,7 +76,7 @@ export default function ProductDetail() {
         <div className="min-h-screen flex flex-col bg-[#F7F7F8]">
             <Navbar />
 
-            <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-10">
+            <main className="flex-1 w-full max-w-7xl mx-auto px-6 py-10">
                 {/* MAIN GRID – Follows entire page */}
                 <div className="grid grid-cols-1 lg:grid-cols-[1.4fr,1fr] gap-10">
                     {/* LEFT SIDE – Scrolls normally */}

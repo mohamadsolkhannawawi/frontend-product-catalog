@@ -95,7 +95,7 @@ export default function Catalog() {
         <div className="min-h-screen flex flex-col bg-[#F5F6FA]">
             <Navbar />
 
-            <main className="max-w-7xl mx-auto px-4 py-10 flex-1 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <main className="max-w-7xl mx-auto px-6 py-10 flex-1 grid grid-cols-1 md:grid-cols-4 gap-8">
                 {/* SIDEBAR */}
                 <aside className="md:col-span-1">
                     <ProductFilter
