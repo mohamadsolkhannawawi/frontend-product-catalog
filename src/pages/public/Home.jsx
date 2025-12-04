@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ProductGrid from "@/components/features/products/ProductGrid";
@@ -6,43 +7,51 @@ import api from "@/lib/axios";
 import { API_ENDPOINTS } from "@/lib/constants";
 import Loader from "@/components/common/Loader";
 
-import {
-    Laptop,
-    Shirt,
-    UtensilsCrossed,
-    Home as HomeIcon,
-    Heart,
-    Gamepad2,
-} from "lucide-react";
+import * as Icons from "lucide-react";
+
+// category labels come directly from backend
 
 export default function Home() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [categories, setCategories] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         let mounted = true;
-        (async () => {
+
+        const loadInitial = async () => {
             try {
-                const res = await api.get(API_ENDPOINTS.CATALOG);
-                if (mounted) setProducts(res.data.data || res.data);
-            } catch (e) {
+                const [catRes, prodRes] = await Promise.all([
+                    api.get(API_ENDPOINTS.CATEGORIES),
+                    api.get(API_ENDPOINTS.CATALOG),
+                ]);
+
+                const catPayload = catRes.data || catRes;
+                const catList = catPayload?.data || catPayload || [];
+                if (mounted)
+                    setCategories(Array.isArray(catList) ? catList : []);
+
+                if (mounted)
+                    setProducts(prodRes.data.data || prodRes.data || []);
+            } catch {
                 // silent
             } finally {
                 if (mounted) setLoading(false);
             }
-        })();
+        };
+
+        loadInitial();
 
         return () => (mounted = false);
     }, []);
 
-    const categories = [
-        { icon: Laptop, label: "Elektronik" },
-        { icon: Shirt, label: "Pakaian" },
-        { icon: UtensilsCrossed, label: "Makanan" },
-        { icon: HomeIcon, label: "Rumah Tangga" },
-        { icon: Heart, label: "Kesehatan" },
-        { icon: Gamepad2, label: "Hobi" },
-    ];
+    const navigateToCatalogWithCategory = (slug) => {
+        // Navigate to catalog page and include category_slug so Catalog can auto-scroll
+        navigate(`/catalog?category_slug=${encodeURIComponent(slug)}`);
+    };
+
+    // categories now loaded from backend `GET /categories`
 
     return (
         <div className="min-h-screen flex flex-col bg-[#F7F7FB]">
@@ -87,34 +96,42 @@ export default function Home() {
                         Kategori Produk
                     </h2>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
-                        {categories.map((item, idx) => (
-                            <div
-                                key={idx}
-                                className="bg-white rounded-xl py-8 shadow-sm border border-gray-100 flex flex-col items-center hover:shadow-md transition"
-                            >
-                                <item.icon
-                                    size={40}
-                                    className="text-brand-purple"
-                                />
-                                <p className="mt-3 text-brand-black font-medium text-base">
-                                    {item.label}
-                                </p>
-                            </div>
-                        ))}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-4">
+                        {(categories || [])
+                            .filter((c) => !c.parent_id) // only top-level categories
+                            .slice(0, 14)
+                            .map((item) => {
+                                const IconComp =
+                                    item.icon && Icons[item.icon]
+                                        ? Icons[item.icon]
+                                        : Icons.Box;
+                                return (
+                                    <button
+                                        key={item.category_id}
+                                        onClick={() =>
+                                            navigateToCatalogWithCategory(
+                                                item.slug
+                                            )
+                                        }
+                                        className={`bg-white rounded-lg py-4 px-2 shadow-sm border border-gray-100 flex flex-col items-center hover:shadow-md transition focus:outline-none`}
+                                    >
+                                        <IconComp
+                                            size={28}
+                                            className="text-brand-purple"
+                                        />
+                                        <p className="mt-2 text-brand-black font-medium text-sm text-center px-1 break-words">
+                                            {item.name}
+                                        </p>
+                                    </button>
+                                );
+                            })}
                     </div>
                 </section>
 
                 {/* FEATURED PRODUCTS */}
                 <section className="mt-24">
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-3xl font-bold">Produk Unggulan</h2>
-                        <a
-                            href="/catalog"
-                            className="text-brand-purple font-medium hover:underline"
-                        >
-                            Lihat Semua
-                        </a>
+                        <h2 className="text-3xl font-bold">Semua Produk</h2>
                     </div>
 
                     {loading ? (

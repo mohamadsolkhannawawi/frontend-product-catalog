@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api from "@/lib/axios";
 import { API_ENDPOINTS } from "@/lib/constants";
 
@@ -21,32 +21,35 @@ export default function useRegion() {
         return () => (mounted = false);
     }, []);
 
-    const loadCities = async (provinceCode) => {
+    const loadCities = useCallback(async (provinceCode) => {
+        if (!provinceCode) return setCities([]);
         try {
             const res = await api.get(API_ENDPOINTS.CITIES(provinceCode));
             setCities(res.data || res);
         } catch (e) {
             setCities([]);
         }
-    };
+    }, []);
 
-    const loadDistricts = async (cityCode) => {
+    const loadDistricts = useCallback(async (cityCode) => {
+        if (!cityCode) return setDistricts([]);
         try {
             const res = await api.get(API_ENDPOINTS.DISTRICTS(cityCode));
             setDistricts(res.data || res);
         } catch (e) {
             setDistricts([]);
         }
-    };
+    }, []);
 
-    const loadVillages = async (districtCode) => {
+    const loadVillages = useCallback(async (districtCode) => {
+        if (!districtCode) return setVillages([]);
         try {
             const res = await api.get(API_ENDPOINTS.VILLAGES(districtCode));
             setVillages(res.data || res);
         } catch (e) {
             setVillages([]);
         }
-    };
+    }, []);
 
     return {
         provinces,

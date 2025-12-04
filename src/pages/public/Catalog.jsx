@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ProductGrid from "@/components/features/products/ProductGrid";
@@ -43,6 +44,30 @@ export default function Catalog() {
         fetch(params);
     }, [searchParams, fetch]);
 
+    const location = useLocation();
+
+    // Auto-scroll to results when navigated with a category_slug
+    useEffect(() => {
+        const shouldScroll = searchParams.get("category_slug");
+        if (!shouldScroll) return;
+
+        // Wait until loading finished then scroll
+        if (!loading) {
+            const el = document.getElementById("catalog-results");
+            if (el) {
+                // small timeout to allow layout to settle
+                setTimeout(
+                    () =>
+                        el.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start",
+                        }),
+                    120
+                );
+            }
+        }
+    }, [loading, searchParams, location]);
+
     function handleApply(filters) {
         const next = { ...Object.fromEntries(searchParams.entries()), page: 1 };
         if (filters.category) next.category_id = filters.category;
@@ -80,23 +105,26 @@ export default function Catalog() {
                     />
                 </aside>
 
-
                 {/* RESULT PANEL */}
                 <section className="md:col-span-3">
                     <header className="mb-6">
-                        <h1 className="text-2xl font-bold text-gray-900">
-                            Hasil Pencarian
+                        <h1 className="text-2xl font-bold text-gray-900 break-words">
+                            {q ? "Hasil Pencarian" : "Semua Produk"}
                         </h1>
 
                         {q && (
                             <p className="text-sm text-gray-500 mt-1">
-                                Menampilkan hasil untuk "<span className="font-semibold">{q}</span>"
+                                Menampilkan hasil untuk "
+                                <span className="font-semibold">{q}</span>"
                             </p>
                         )}
                     </header>
 
                     {/* CARD GRID */}
-                    <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                    <div
+                        id="catalog-results"
+                        className="bg-white rounded-xl p-4 shadow-sm border border-gray-100"
+                    >
                         {loading ? (
                             <Loader />
                         ) : (

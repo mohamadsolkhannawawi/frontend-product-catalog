@@ -4,6 +4,8 @@ import api from "@/lib/axios";
 import { API_ENDPOINTS } from "@/lib/constants";
 import toast from "react-hot-toast";
 
+// (No mapping) Display category name directly; backend should provide the desired label
+
 export default function ProductFilter({ initial = {}, onApply, onReset }) {
     const {
         provinces,
@@ -201,22 +203,18 @@ export default function ProductFilter({ initial = {}, onApply, onReset }) {
             </div>
 
             <div className="mt-4 flex justify-between gap-2">
-            <button
-                type="submit"
-                className="btn-primary w-full"
-            >
-                Terapkan
-            </button>
+                <button type="submit" className="btn-primary w-full">
+                    Terapkan
+                </button>
 
-            <button
-                type="button"
-                onClick={reset}
-                className="btn-secondary w-full"
-            >
-                Reset
-            </button>
-        </div>
-
+                <button
+                    type="button"
+                    onClick={reset}
+                    className="btn-secondary w-full"
+                >
+                    Reset
+                </button>
+            </div>
         </form>
     );
 }
