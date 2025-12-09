@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from "react";
 import api from "@/lib/axios";
-import { 
-    Ban, 
-    CheckCircle, 
-    ChevronLeft, 
-    ChevronRight,
-    Loader,
-} from "lucide-react";
+import { Ban, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
+import Loader, { BarsSpinner } from "@/components/common/Loader";
 
 export default function AdminManagement() {
     const [sellers, setSellers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState("all"); // all, active, inactive
+    const [actionLoading, setActionLoading] = useState(false);
 
     // Pagination State
     const [currentPage, setCurrentPage] = useState(1);
@@ -39,7 +35,7 @@ export default function AdminManagement() {
     const toggleSellerStatus = async (sellerId, currentStatus) => {
         const action = currentStatus ? "menonaktifkan" : "mengaktifkan";
         if (!confirm(`Apakah Anda yakin ingin ${action} toko ini?`)) return;
-
+        setActionLoading(true);
         try {
             await api.patch(
                 `/dashboard/admin/sellers/${sellerId}/toggle-status`
@@ -58,6 +54,8 @@ export default function AdminManagement() {
         } catch (error) {
             console.error("Failed to toggle seller status:", error);
             toast.error("Gagal mengubah status");
+        } finally {
+            setActionLoading(false);
         }
     };
 
@@ -96,6 +94,14 @@ export default function AdminManagement() {
 
     return (
         <div className="space-y-6 pb-10">
+            {loading && <Loader />}
+            {actionLoading && (
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
+                    <div className="text-brand-purple">
+                        <BarsSpinner size={80} />
+                    </div>
+                </div>
+            )}
             {/* Header */}
             <div className="flex justify-between items-start">
                 <div className="text-left">
@@ -157,12 +163,7 @@ export default function AdminManagement() {
 
                 {/* Table Content */}
                 <div className="flex-1 overflow-x-auto">
-                    {loading ? (
-                        <div className="h-64 flex items-center justify-center text-gray-500 gap-2">
-                            <Loader className="animate-spin w-5 h-5" /> Memuat
-                            data...
-                        </div>
-                    ) : filteredData.length === 0 ? (
+                    {loading ? null : filteredData.length === 0 ? (
                         <div className="h-64 flex items-center justify-center text-gray-500">
                             Tidak ada data penjual.
                         </div>

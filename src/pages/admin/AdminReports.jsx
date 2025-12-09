@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import api from "@/lib/axios";
-import { Download, Loader, User, Map, Trophy } from "lucide-react";
+import {
+    Download,
+    Loader as LucideLoader,
+    User,
+    Map,
+    Trophy,
+} from "lucide-react";
+import { BarsSpinner } from "@/components/common/Loader";
 import toast from "react-hot-toast";
 
 export default function AdminReports() {
@@ -127,7 +134,7 @@ export default function AdminReports() {
                         >
                             {loading[item.key] ? (
                                 <>
-                                    <Loader className="w-4 h-4 animate-spin" />
+                                    <LucideLoader className="w-4 h-4 animate-spin text-white mr-2" />
                                     Memproses...
                                 </>
                             ) : (

@@ -12,6 +12,8 @@ import {
     BarChart3,
     FileText,
 } from "lucide-react";
+import { createPortal } from "react-dom";
+import { BarsSpinner } from "@/components/common/Loader";
 import { useAuth } from "@/context/AuthContext";
 
 export default function AdminDashboard({ initialActive = "overview" }) {
@@ -141,11 +143,15 @@ function LogoutButton({ collapsed }) {
     const auth = useAuth();
     const navigate = useNavigate();
 
+    const [loggingOut, setLoggingOut] = React.useState(false);
+
     const doLogout = async () => {
         if (confirm("Apakah Anda yakin ingin keluar?")) {
+            setLoggingOut(true);
             try {
                 await auth.logout();
             } finally {
+                setLoggingOut(false);
                 navigate("/");
             }
         }
@@ -161,6 +167,15 @@ function LogoutButton({ collapsed }) {
         >
             <LogOut className="w-5 h-5" />
             {!collapsed && <span>Logout</span>}
+            {loggingOut &&
+                createPortal(
+                    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
+                        <div className="text-brand-purple">
+                            <BarsSpinner size={96} />
+                        </div>
+                    </div>,
+                    document.body
+                )}
         </button>
     );
 }
