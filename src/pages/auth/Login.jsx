@@ -7,6 +7,7 @@ import api from "@/lib/axios";
 import toast from "react-hot-toast";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
+import Loader, { BarsSpinner } from "@/components/common/Loader";
 import { useAuth } from "@/context/AuthContext";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -37,25 +38,39 @@ export default function Login() {
                 password: values.password,
             });
 
+            console.log("Login response:", response.data);
+
             // Save Bearer Token from response
             if (response.data.token) {
                 localStorage.setItem("auth_token", response.data.token);
+                console.log("Token saved to localStorage");
             }
 
             // Fetch current user (me) and update auth context
             let me = response.data.user || null;
+            console.log("User data:", me);
+            console.log("User role:", me?.role);
+
             if (me) {
                 auth.setAuthUser(me);
             }
 
             toast.success("Berhasil masuk");
             // Redirect based on role: admin -> admin dashboard, seller -> seller dashboard
-            if (me && me.role === "admin") navigate("/admin/dashboard");
-            else if (me && me.role === "seller") navigate("/seller/dashboard");
-            else navigate("/");
+            if (me && me.role === "admin") {
+                console.log("Redirecting to admin dashboard");
+                navigate("/admin/dashboard");
+            } else if (me && me.role === "seller") {
+                console.log("Redirecting to seller dashboard");
+                navigate("/seller/dashboard");
+            } else {
+                console.log("Redirecting to home");
+                navigate("/");
+            }
         } catch (err) {
             // Show validation / server errors
             const msg = err?.response?.data?.message || "Login gagal";
+            console.error("Login error:", err);
             if (err?.response?.data?.errors) {
                 const first = Object.values(err.response.data.errors)[0];
                 toast.error(Array.isArray(first) ? first[0] : String(first));
@@ -68,6 +83,7 @@ export default function Login() {
     return (
         <div className="min-h-screen flex flex-col bg-gray-50">
             <Navbar />
+            {isSubmitting && <Loader />}
 
             <div className="flex-1 flex items-center justify-center py-12 px-4">
                 <div className="w-full max-w-md">
@@ -163,10 +179,20 @@ export default function Login() {
                             <Button
                                 type="submit"
                                 variant="primary"
-                                className="w-full h-12 text-base font-medium"
+                                className="w-full h-12 text-base font-medium flex items-center justify-center gap-2"
                                 disabled={isSubmitting}
                             >
-                                {isSubmitting ? "Masuk..." : "Masuk"}
+                                {isSubmitting ? (
+                                    <>
+                                        <BarsSpinner
+                                            size={18}
+                                            className="text-brand-purple"
+                                        />
+                                        Masuk...
+                                    </>
+                                ) : (
+                                    "Masuk"
+                                )}
                             </Button>
                         </form>
 

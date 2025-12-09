@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import api from "@/lib/axios";
-import { Download, Loader, ShoppingBag, Package, Star } from "lucide-react";
+import {
+    Download,
+    Loader as LucideLoader,
+    ShoppingBag,
+    Package,
+    Star,
+} from "lucide-react";
+import { BarsSpinner } from "@/components/common/Loader";
 import toast from "react-hot-toast";
 
 export default function SellerReports() {
@@ -48,7 +55,7 @@ export default function SellerReports() {
             a.click();
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
-            
+
             toast.success("Laporan berhasil diunduh");
         } catch (error) {
             console.error("Download error:", error);
@@ -62,21 +69,24 @@ export default function SellerReports() {
         {
             key: "sales",
             title: "Laporan Penjualan",
-            description: "Rekapitulasi transaksi penjualan yang berhasil, termasuk pendapatan dan status pesanan.",
+            description:
+                "Rekapitulasi transaksi penjualan yang berhasil, termasuk pendapatan dan status pesanan.",
             icon: <ShoppingBag className="w-6 h-6 text-blue-600" />,
             iconBg: "bg-blue-100",
         },
         {
             key: "stock",
             title: "Laporan Stok Produk",
-            description: "Analisis ketersediaan stok produk saat ini untuk perencanaan restock barang.",
+            description:
+                "Analisis ketersediaan stok produk saat ini untuk perencanaan restock barang.",
             icon: <Package className="w-6 h-6 text-green-600" />,
             iconBg: "bg-green-100",
         },
         {
             key: "reviews",
             title: "Laporan Ulasan & Rating",
-            description: "Daftar ulasan pelanggan beserta rating untuk mengevaluasi kepuasan pembeli.",
+            description:
+                "Daftar ulasan pelanggan beserta rating untuk mengevaluasi kepuasan pembeli.",
             icon: <Star className="w-6 h-6 text-yellow-600" />,
             iconBg: "bg-yellow-100",
         },
@@ -86,9 +96,12 @@ export default function SellerReports() {
         <div className="space-y-8 pb-10 text-left">
             {/* Header Page */}
             <div>
-                <h1 className="text-2xl font-bold text-gray-800">Laporan Toko</h1>
+                <h1 className="text-2xl font-bold text-gray-800">
+                    Laporan Toko
+                </h1>
                 <p className="text-gray-500 mt-1">
-                    Unduh laporan kinerja toko dan penjualan Anda dalam format PDF.
+                    Unduh laporan kinerja toko dan penjualan Anda dalam format
+                    PDF.
                 </p>
             </div>
 
@@ -101,7 +114,9 @@ export default function SellerReports() {
                     >
                         {/* Header Card */}
                         <div className="flex items-center gap-4 mb-4">
-                            <div className={`p-3 rounded-full ${item.iconBg} flex items-center justify-center`}>
+                            <div
+                                className={`p-3 rounded-full ${item.iconBg} flex items-center justify-center`}
+                            >
                                 {item.icon}
                             </div>
                             <h3 className="text-lg font-bold text-gray-800 leading-tight">
@@ -122,12 +137,12 @@ export default function SellerReports() {
                         >
                             {loading[item.key] ? (
                                 <>
-                                    <Loader className="w-4 h-4 animate-spin" />
+                                    <LucideLoader className="w-4 h-4 animate-spin text-white mr-2" />
                                     Memproses...
                                 </>
                             ) : (
                                 <>
-                                    <Download className="w-4 h-4" />
+                                    <Download className="w-4 h-4 text-white" />
                                     Download PDF
                                 </>
                             )}
@@ -138,25 +153,37 @@ export default function SellerReports() {
 
             {/* Information Section */}
             <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm text-left">
-                <h3 className="text-xl font-bold text-gray-800 mb-6">Informasi Isi Laporan</h3>
-                
+                <h3 className="text-xl font-bold text-gray-800 mb-6">
+                    Informasi Isi Laporan
+                </h3>
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div>
-                        <h4 className="font-bold text-gray-900 text-sm mb-2">Riwayat Penjualan</h4>
+                        <h4 className="font-bold text-gray-900 text-sm mb-2">
+                            Riwayat Penjualan
+                        </h4>
                         <p className="text-sm text-gray-600 leading-relaxed">
-                            Data lengkap mengenai transaksi yang telah selesai, dibatalkan, atau sedang diproses untuk pembukuan keuangan.
+                            Data lengkap mengenai transaksi yang telah selesai,
+                            dibatalkan, atau sedang diproses untuk pembukuan
+                            keuangan.
                         </p>
                     </div>
                     <div>
-                        <h4 className="font-bold text-gray-900 text-sm mb-2">Manajemen Stok</h4>
+                        <h4 className="font-bold text-gray-900 text-sm mb-2">
+                            Manajemen Stok
+                        </h4>
                         <p className="text-sm text-gray-600 leading-relaxed">
-                            Informasi detail mengenai jumlah stok fisik vs stok sistem untuk menghindari overselling.
+                            Informasi detail mengenai jumlah stok fisik vs stok
+                            sistem untuk menghindari overselling.
                         </p>
                     </div>
                     <div>
-                        <h4 className="font-bold text-gray-900 text-sm mb-2">Kepuasan Pelanggan</h4>
+                        <h4 className="font-bold text-gray-900 text-sm mb-2">
+                            Kepuasan Pelanggan
+                        </h4>
                         <p className="text-sm text-gray-600 leading-relaxed">
-                            Ringkasan performa toko berdasarkan feedback pelanggan untuk meningkatkan kualitas layanan.
+                            Ringkasan performa toko berdasarkan feedback
+                            pelanggan untuk meningkatkan kualitas layanan.
                         </p>
                     </div>
                 </div>
