@@ -8,6 +8,7 @@ import api from "@/lib/axios";
 import { API_ENDPOINTS } from "@/lib/constants";
 import toast from "react-hot-toast";
 import Input from "@/components/common/Input";
+import Loader, { BarsSpinner } from "@/components/common/Loader";
 import useRegion from "@/hooks/useRegion";
 import useImagePreview from "@/hooks/useImagePreview";
 import Navbar from "@/components/layout/Navbar";
@@ -343,6 +344,7 @@ export default function Register() {
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
             <Navbar />
+            {isSubmitting && <Loader />}
 
             <div className="flex-1 flex items-center justify-center py-12 px-4">
                 <div className="w-full max-w-2xl">
@@ -855,12 +857,20 @@ export default function Register() {
                                         </button>
                                         <button
                                             type="submit"
-                                            className="flex-1 px-6 py-3 bg-purple-600 text-white font-medium rounded-sm hover:bg-purple-700 transition disabled:bg-gray-400"
+                                            className="flex-1 px-6 py-3 bg-purple-600 text-white font-medium rounded-sm hover:bg-purple-700 transition disabled:bg-gray-400 flex items-center justify-center gap-2"
                                             disabled={isSubmitting}
                                         >
-                                            {isSubmitting
-                                                ? "Mendaftarkan..."
-                                                : "Daftar sebagai Seller"}
+                                            {isSubmitting ? (
+                                                <>
+                                                    <BarsSpinner
+                                                        size={18}
+                                                        className="text-brand-purple"
+                                                    />
+                                                    Mendaftarkan...
+                                                </>
+                                            ) : (
+                                                "Daftar sebagai Seller"
+                                            )}
                                         </button>
                                     </div>
                                 </div>

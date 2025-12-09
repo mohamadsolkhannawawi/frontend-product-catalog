@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Loader from "@/components/common/Loader";
 import {
     BarChart,
     Bar,
@@ -68,13 +69,7 @@ export default function AdminOverview() {
     };
 
     if (loading) {
-        return (
-            <div className="flex items-center justify-center h-full min-h-[400px]">
-                <div className="text-gray-500 font-medium">
-                    Memuat data dashboard...
-                </div>
-            </div>
-        );
+        return <Loader />;
     }
 
     return (

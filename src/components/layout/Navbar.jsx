@@ -21,9 +21,9 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="sticky top-0 z-50 bg-white border-b border-gray-200/70">
+        <nav className="sticky top-0 z-50 bg-white border-b border-gray-200/70 py-3">
             <div className="max-w-7xl mx-auto px-6">
-                <div className="flex items-center justify-between h-14">
+                <div className="flex items-center justify-between">
                     {/* LOGO */}
                     <Link to="/" className="flex items-center gap-2">
                         <img src={logo} alt="Catalozy" className="h-8 w-auto" />
@@ -33,7 +33,7 @@ const Navbar = () => {
                     </Link>
 
                     {/* SEARCH BAR (CENTER) */}
-                    <div className="flex-1 max-w-2xl mx-10">
+                    <div className="flex-1 max-w-2xl mx-8">
                         <div className="relative">
                             <Search
                                 className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 hover:text-gray-600 transition cursor-pointer"
