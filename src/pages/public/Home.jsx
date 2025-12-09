@@ -97,34 +97,39 @@ export default function Home() {
                     </h2>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-4">
-                        {(categories || [])
-                            .filter((c) => !c.parent_id) // only top-level categories
-                            .slice(0, 14)
-                            .map((item) => {
-                                const IconComp =
-                                    item.icon && Icons[item.icon]
-                                        ? Icons[item.icon]
-                                        : Icons.Box;
-                                return (
-                                    <button
-                                        key={item.category_id}
-                                        onClick={() =>
-                                            navigateToCatalogWithCategory(
-                                                item.slug
-                                            )
-                                        }
-                                        className={`bg-white rounded-lg py-4 px-2 shadow-sm border border-gray-100 flex flex-col items-center hover:shadow-md transition focus:outline-none`}
-                                    >
-                                        <IconComp
-                                            size={28}
-                                            className="text-brand-purple"
-                                        />
-                                        <p className="mt-2 text-brand-black font-medium text-sm text-center px-1 break-words">
-                                            {item.name}
-                                        </p>
-                                    </button>
-                                );
-                            })}
+                        {categories.length === 0 && loading ? (
+                            // show skeleton chips while categories load
+                            <Loader variant="chip" count={14} />
+                        ) : (
+                            (categories || [])
+                                .filter((c) => !c.parent_id) // only top-level categories
+                                .slice(0, 14)
+                                .map((item) => {
+                                    const IconComp =
+                                        item.icon && Icons[item.icon]
+                                            ? Icons[item.icon]
+                                            : Icons.Box;
+                                    return (
+                                        <button
+                                            key={item.category_id}
+                                            onClick={() =>
+                                                navigateToCatalogWithCategory(
+                                                    item.slug
+                                                )
+                                            }
+                                            className={`bg-white rounded-lg py-4 px-2 shadow-sm border border-gray-100 flex flex-col items-center hover:shadow-md transition focus:outline-none`}
+                                        >
+                                            <IconComp
+                                                size={28}
+                                                className="text-brand-purple"
+                                            />
+                                            <p className="mt-2 text-brand-black font-medium text-sm text-center px-1 break-words">
+                                                {item.name}
+                                            </p>
+                                        </button>
+                                    );
+                                })
+                        )}
                     </div>
                 </section>
 
@@ -135,7 +140,7 @@ export default function Home() {
                     </div>
 
                     {loading ? (
-                        <Loader />
+                        <Loader variant="skeleton" count={8} />
                     ) : (
                         <ProductGrid products={products} columns={4} />
                     )}

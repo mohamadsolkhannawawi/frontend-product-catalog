@@ -126,7 +126,7 @@ export default function Catalog() {
                         className="bg-white rounded-xl p-4 shadow-sm border border-gray-100"
                     >
                         {loading ? (
-                            <Loader />
+                            <Loader variant="skeleton" count={12} />
                         ) : (
                             <ProductGrid products={products} columns={3} />
                         )}
