@@ -13,10 +13,11 @@ import {
 } from "lucide-react";
 import { BarsSpinner } from "@/components/common/Loader";
 import ProductFormModal from "@/components/features/products/ProductFormModal";
-import toast from "react-hot-toast";
+import { useFeedback } from "@/context/FeedbackContext";
 
 export default function SellerProducts() {
     const navigate = useNavigate();
+    const { showConfirmation, success, error } = useFeedback();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [deletingId, setDeletingId] = useState(null);
@@ -38,26 +39,33 @@ export default function SellerProducts() {
             const res = await api.get("/dashboard/seller/products");
             const data = res.data.data || res.data || [];
             setProducts(data);
-        } catch (error) {
-            console.error("Failed to fetch products", error);
-            toast.error("Gagal memuat produk");
+        } catch (err) {
+            console.error("Failed to fetch products", err);
+            error("Gagal memuat produk");
         } finally {
             setLoading(false);
         }
     };
 
     const handleDelete = async (id) => {
-        if (!confirm("Apakah Anda yakin ingin menghapus produk ini?")) return;
-        setDeletingId(id);
-        try {
-            await api.delete(`/dashboard/seller/products/${id}`);
-            setProducts(products.filter((p) => p.product_id !== id));
-            toast.success("Produk berhasil dihapus");
-        } catch (error) {
-            toast.error("Gagal menghapus produk");
-        } finally {
-            setDeletingId(null);
-        }
+        showConfirmation({
+            title: "Hapus Produk?",
+            message: "Produk yang dihapus tidak dapat dikembalikan.",
+            confirmText: "Hapus",
+            isDangerous: true,
+            onConfirm: async () => {
+                setDeletingId(id);
+                try {
+                    await api.delete(`/dashboard/seller/products/${id}`);
+                    setProducts(products.filter((p) => p.product_id !== id));
+                    success("Produk berhasil dihapus");
+                } catch (err) {
+                    error("Gagal menghapus produk");
+                } finally {
+                    setDeletingId(null);
+                }
+            },
+        });
     };
 
     // Filter Logic
