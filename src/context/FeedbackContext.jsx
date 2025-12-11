@@ -117,6 +117,13 @@ export const FeedbackProvider = ({ children }) => {
                 isOpen={modals.confirmation.isOpen}
                 onClose={closeConfirmation}
                 {...modals.confirmation.config}
+                onConfirm={async () => {
+                    try {
+                        await modals.confirmation.config.onConfirm?.();
+                    } finally {
+                        closeConfirmation();
+                    }
+                }}
             />
 
             {/* Rejection Modal */}
@@ -124,6 +131,13 @@ export const FeedbackProvider = ({ children }) => {
                 isOpen={modals.rejection.isOpen}
                 onClose={closeRejection}
                 {...modals.rejection.config}
+                onSubmit={async (reason) => {
+                    try {
+                        await modals.rejection.config.onSubmit?.(reason);
+                    } finally {
+                        closeRejection();
+                    }
+                }}
             />
 
             {/* Success Modal */}
@@ -131,9 +145,12 @@ export const FeedbackProvider = ({ children }) => {
                 isOpen={modals.success.isOpen}
                 onClose={closeSuccess}
                 {...modals.success.config}
-                onAction={() => {
-                    modals.success.config.onAction?.();
-                    closeSuccess();
+                onAction={async () => {
+                    try {
+                        await modals.success.config.onAction?.();
+                    } finally {
+                        closeSuccess();
+                    }
                 }}
             />
         </FeedbackContext.Provider>
