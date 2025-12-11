@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom"; // Import createPortal untuk solusi layar full
 import api from "@/lib/axios";
 import { API_ENDPOINTS } from "@/lib/constants";
-import toast from "react-hot-toast";
+import { useFeedback } from "@/context/FeedbackContext";
 import {
     Search,
     Eye,
@@ -15,6 +15,7 @@ import {
 import Loader, { BarsSpinner } from "@/components/common/Loader";
 
 export default function AdminSellers() {
+    const { showConfirmation, showRejection, success, error } = useFeedback();
     const [sellers, setSellers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
@@ -69,29 +70,39 @@ export default function AdminSellers() {
     // --- Actions ---
 
     const approve = async (id) => {
-        if (!confirm("Setujui pendaftaran penjual ini?")) return;
-        setActionLoading(true);
-        try {
-            await api.post(API_ENDPOINTS.ADMIN_APPROVE_SELLER(id));
-            toast.success("Penjual berhasil disetujui");
-            await loadPending();
-        } catch (e) {
-        } finally {
-            setActionLoading(false);
-        }
+        showConfirmation({
+            title: "Setujui Pendaftaran?",
+            message:
+                "Penjual ini akan diaktifkan dan dapat berjualan di platform.",
+            confirmText: "Setujui",
+            isDangerous: false,
+            onConfirm: async () => {
+                setActionLoading(true);
+                try {
+                    await api.post(API_ENDPOINTS.ADMIN_APPROVE_SELLER(id));
+                    success("Penjual berhasil disetujui");
+                    await loadPending();
+                } catch (err) {
+                    error("Gagal menyetujui penjual");
+                } finally {
+                    setActionLoading(false);
+                }
+            },
+        });
     };
 
-    const doReject = async () => {
+    const doReject = async (sellerId, rejectionReason) => {
         setActionLoading(true);
         try {
-            await api.post(
-                `${API_ENDPOINTS.ADMIN_REJECT_SELLER(rejecting.sellerId)}`,
-                { reason }
-            );
-            toast.success("Penjual ditolak");
+            await api.post(`${API_ENDPOINTS.ADMIN_REJECT_SELLER(sellerId)}`, {
+                reason: rejectionReason,
+            });
+            success("Penjual berhasil ditolak");
             setRejecting({ open: false, sellerId: null });
+            setReason("");
             await loadPending();
-        } catch (e) {
+        } catch (err) {
+            error("Gagal menolak penjual");
         } finally {
             setActionLoading(false);
         }
@@ -307,12 +318,19 @@ export default function AdminSellers() {
                                                 </button>
                                                 <button
                                                     onClick={() => {
-                                                        setRejecting({
-                                                            open: true,
-                                                            sellerId:
-                                                                seller.seller_id,
+                                                        showRejection({
+                                                            title: "Tolak Pendaftaran",
+                                                            message:
+                                                                "Berikan alasan penolakan untuk dikirim ke email pendaftar.",
+                                                            onSubmit: (
+                                                                rejectionReason
+                                                            ) => {
+                                                                doReject(
+                                                                    seller.seller_id,
+                                                                    rejectionReason
+                                                                );
+                                                            },
                                                         });
-                                                        setReason("");
                                                     }}
                                                     className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-red-500 text-white rounded hover:bg-red-600 transition shadow-sm"
                                                 >
@@ -577,58 +595,6 @@ export default function AdminSellers() {
                                     className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition shadow-sm"
                                 >
                                     Tutup
-                                </button>
-                            </div>
-                        </div>
-                    </div>,
-                    document.body
-                )}
-
-            {/* Reject Modal */}
-            {rejecting.open &&
-                createPortal(
-                    <div className="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center p-4 backdrop-blur-sm">
-                        <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 transform transition-all scale-100">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="p-2 bg-red-100 rounded-full text-red-600">
-                                    <X className="w-6 h-6" />
-                                </div>
-                                <h3 className="text-lg font-bold text-gray-900">
-                                    Tolak Pendaftaran
-                                </h3>
-                            </div>
-
-                            <p className="text-sm text-gray-600 mb-4 leading-relaxed">
-                                Mohon berikan alasan penolakan yang jelas agar
-                                penjual dapat memperbaiki data pendaftaran
-                                mereka.
-                            </p>
-
-                            <textarea
-                                className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all resize-none"
-                                rows={4}
-                                placeholder="Tulis alasan penolakan di sini..."
-                                value={reason}
-                                onChange={(e) => setReason(e.target.value)}
-                            />
-
-                            <div className="flex justify-end gap-3 mt-6">
-                                <button
-                                    onClick={() =>
-                                        setRejecting({
-                                            open: false,
-                                            sellerId: null,
-                                        })
-                                    }
-                                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-                                >
-                                    Batal
-                                </button>
-                                <button
-                                    onClick={doReject}
-                                    className="px-4 py-2 text-sm font-medium bg-red-600 text-white rounded-lg hover:bg-red-700 transition shadow-sm"
-                                >
-                                    Kirim Penolakan
                                 </button>
                             </div>
                         </div>
