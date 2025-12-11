@@ -160,12 +160,12 @@ export default function SellerReports() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div>
                         <h4 className="font-bold text-gray-900 text-sm mb-2">
-                            Riwayat Penjualan
+                            Produk Segera Dipesan
                         </h4>
                         <p className="text-sm text-gray-600 leading-relaxed">
-                            Data lengkap mengenai transaksi yang telah selesai,
-                            dibatalkan, atau sedang diproses untuk pembukuan
-                            keuangan.
+                            Produk dengan stok kurang dari 2 unit yang perlu
+                            segera dipesan ulang untuk menjaga ketersediaan
+                            barang.
                         </p>
                     </div>
                     <div>

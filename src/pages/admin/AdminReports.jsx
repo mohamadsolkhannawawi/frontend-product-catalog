@@ -35,7 +35,7 @@ export default function AdminReports() {
                     break;
                 case "products":
                     endpoint = "/dashboard/admin/reports/top-rated-products";
-                    filename = "Laporan_Produk_Terbaik.pdf";
+                    filename = "Laporan_Daftar_Produk_Berdasarkan_Rating.pdf";
                     break;
                 default:
                     return;
@@ -82,8 +82,9 @@ export default function AdminReports() {
         },
         {
             key: "products",
-            title: "Laporan Produk Terbaik",
-            description: "Daftar produk dengan rating tertinggi di platform.",
+            title: "Laporan Daftar Produk Berdasarkan Rating",
+            description:
+                "Daftar produk dengan rating dari pelanggan di setiap provinsi. Satu baris per (produk, provinsi).",
             icon: <Trophy className="w-6 h-6 text-purple-600" />,
             iconBg: "bg-purple-100",
         },
