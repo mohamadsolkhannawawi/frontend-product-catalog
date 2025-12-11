@@ -15,6 +15,7 @@ import {
 import { createPortal } from "react-dom";
 import { BarsSpinner } from "@/components/common/Loader";
 import { useAuth } from "@/context/AuthContext";
+import { useFeedback } from "@/context/FeedbackContext";
 
 export default function AdminDashboard({ initialActive = "overview" }) {
     const [collapsed, setCollapsed] = useState(false);
@@ -142,31 +143,42 @@ export default function AdminDashboard({ initialActive = "overview" }) {
 function LogoutButton({ collapsed }) {
     const auth = useAuth();
     const navigate = useNavigate();
+    const { showConfirmation } = useFeedback();
 
     const [loggingOut, setLoggingOut] = React.useState(false);
 
-    const doLogout = async () => {
-        if (confirm("Apakah Anda yakin ingin keluar?")) {
-            setLoggingOut(true);
-            try {
-                await auth.logout();
-            } finally {
-                setLoggingOut(false);
-                navigate("/");
-            }
-        }
+    const doLogout = () => {
+        showConfirmation({
+            title: "Konfirmasi Logout",
+            message: "Anda akan keluar dari sesi ini.",
+            confirmText: "Keluar",
+            cancelText: "Batal",
+            isDangerous: false,
+            onConfirm: async () => {
+                setLoggingOut(true);
+                try {
+                    await auth.logout();
+                    navigate("/");
+                } finally {
+                    setLoggingOut(false);
+                }
+            },
+        });
     };
 
     return (
-        <button
-            onClick={doLogout}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-red-600 hover:bg-red-50 ${
-                collapsed ? "justify-center" : ""
-            }`}
-            title="Logout"
-        >
-            <LogOut className="w-5 h-5" />
-            {!collapsed && <span>Logout</span>}
+        <>
+            <button
+                onClick={doLogout}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-red-600 hover:bg-red-50 ${
+                    collapsed ? "justify-center" : ""
+                }`}
+                title="Logout"
+            >
+                <LogOut className="w-5 h-5" />
+                {!collapsed && <span>Logout</span>}
+            </button>
+
             {loggingOut &&
                 createPortal(
                     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
@@ -176,6 +188,6 @@ function LogoutButton({ collapsed }) {
                     </div>,
                     document.body
                 )}
-        </button>
+        </>
     );
 }
