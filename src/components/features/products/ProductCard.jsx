@@ -25,11 +25,10 @@ export default function ProductCard({ product }) {
     const city = product.city || product.seller?.city || "—";
 
     return (
-        <Link to={`/products/${product.slug}`} className="block">
-            <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all overflow-hidden">
-
+        <Link to={`/products/${product.slug}`} className="block h-full">
+            <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all overflow-hidden h-full flex flex-col">
                 {/* Primary Image */}
-                <div className="overflow-hidden bg-gray-100 relative">
+                <div className="overflow-hidden bg-gray-100 relative flex-shrink-0">
                     <img
                         src={imageUrl}
                         alt={product.name}
@@ -49,42 +48,70 @@ export default function ProductCard({ product }) {
                 </div>
 
                 {/* Product Info */}
-                <div className="p-4">
-
+                <div className="p-4 flex-grow flex flex-col">
                     {/* Nama Produk */}
-                    <h3 className="text-base font-semibold text-gray-900 leading-snug line-clamp-2 mb-1">
+                    <h3 className="text-sm font-semibold text-gray-900 leading-snug line-clamp-2 mb-2 h-10">
                         {product.name}
                     </h3>
 
                     {/* Category Badge */}
                     {product.category && product.category.name && (
-                        <div className="mb-2">
-                            <span className="inline-block bg-purple-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                        <div className="mb-1">
+                            <span className="inline-block bg-purple-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full truncate max-w-full">
                                 {product.category.name}
                             </span>
                         </div>
-                    )}                    
+                    )}
 
-                    {/* STORE NAME (new styling like reference) */}
-                    <p className="text-sm text-gray-500 mb-1">
+                    {/* Status Badge */}
+                    {product.status && (
+                        <div className="mb-1">
+                            <span
+                                className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full ${
+                                    product.status === "active"
+                                        ? "bg-green-100 text-green-800"
+                                        : product.status === "draft"
+                                        ? "bg-gray-100 text-gray-800"
+                                        : product.status === "inactive"
+                                        ? "bg-yellow-100 text-yellow-800"
+                                        : product.status === "discontinued"
+                                        ? "bg-red-100 text-red-800"
+                                        : "bg-gray-100 text-gray-800"
+                                }`}
+                            >
+                                {product.status === "active"
+                                    ? "✓ Aktif"
+                                    : product.status === "draft"
+                                    ? "Draft"
+                                    : product.status === "inactive"
+                                    ? "Tidak Aktif"
+                                    : product.status === "discontinued"
+                                    ? "Dihentikan"
+                                    : product.status}
+                            </span>
+                        </div>
+                    )}
+
+                    {/* STORE NAME */}
+                    <p className="text-xs text-gray-500 mb-2 truncate">
                         {product.seller?.store_name}
                     </p>
 
                     {/* Rating */}
-                    <div className="flex items-center gap-1 mb-1">
+                    <div className="flex items-center gap-1 mb-2">
                         <RatingStarDisplay rating={product.average_rating} />
-                        <span className="text-sm text-gray-700 font-medium">
+                        <span className="text-xs text-gray-700 font-medium">
                             ({product.average_rating?.toFixed(1) || "0.0"})
                         </span>
                     </div>
 
                     {/* Harga */}
-                    <div className="text-2xl font-bold text-brand-purple mt-2">
+                    <div className="text-lg font-bold text-brand-purple mt-auto pt-2">
                         {formatCurrency(product.price)}
                     </div>
 
                     {/* Kota/Kabupaten */}
-                    <div className="text-sm text-gray-500 mt-1">
+                    <div className="text-xs text-gray-500 mt-1 truncate">
                         Kab. {city}
                     </div>
                 </div>
