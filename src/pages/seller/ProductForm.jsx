@@ -29,6 +29,7 @@ export default function ProductForm() {
         price: "",
         stock: "",
         category_id: "",
+        status: "draft",
     });
 
     // Image Handling
@@ -65,6 +66,7 @@ export default function ProductForm() {
                 price: product.price || 0,
                 stock: product.stock || 0,
                 category_id: product.category_id || "",
+                status: product.status || "draft",
             });
             setExistingImages(product.images || []);
         } catch (e) {
@@ -131,6 +133,7 @@ export default function ProductForm() {
             data.append("description", formData.description);
             data.append("price", formData.price);
             data.append("stock", formData.stock);
+            data.append("status", formData.status);
 
             if (formData.category_id) {
                 data.append("category_id", formData.category_id);
@@ -311,6 +314,34 @@ export default function ProductForm() {
                                         }
                                     />
                                 </div>
+                            </div>
+
+                            {/* Status Field */}
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                                    Status Produk{" "}
+                                    <span className="text-red-500">*</span>
+                                </label>
+                                <select
+                                    required
+                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all cursor-pointer"
+                                    value={formData.status}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            status: e.target.value,
+                                        })
+                                    }
+                                >
+                                    <option value="draft">Draft</option>
+                                    <option value="active">Aktif</option>
+                                    <option value="inactive">
+                                        Tidak Aktif
+                                    </option>
+                                    <option value="discontinued">
+                                        Dihentikan
+                                    </option>
+                                </select>
                             </div>
 
                             {/* Deskripsi */}
