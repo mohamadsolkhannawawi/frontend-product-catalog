@@ -12,6 +12,7 @@ import {
     RotateCcw,
 } from "lucide-react";
 import { BarsSpinner } from "@/components/common/Loader";
+import ProductFormModal from "@/components/features/products/ProductFormModal";
 import toast from "react-hot-toast";
 
 export default function SellerProducts() {
@@ -20,6 +21,8 @@ export default function SellerProducts() {
     const [loading, setLoading] = useState(true);
     const [deletingId, setDeletingId] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingProductId, setEditingProductId] = useState(null);
 
     // Pagination State
     const [currentPage, setCurrentPage] = useState(1);
@@ -122,7 +125,7 @@ export default function SellerProducts() {
                         Refresh
                     </button>
                     <button
-                        onClick={() => navigate("/seller/products/new")}
+                        onClick={() => setIsModalOpen(true)}
                         className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition shadow-sm font-medium text-sm"
                     >
                         <Plus className="w-4 h-4" />
@@ -130,6 +133,17 @@ export default function SellerProducts() {
                     </button>
                 </div>
             </div>
+
+            {/* Modal */}
+            <ProductFormModal
+                isOpen={isModalOpen}
+                onClose={() => {
+                    setIsModalOpen(false);
+                    setEditingProductId(null);
+                }}
+                onSuccess={fetchProducts}
+                productId={editingProductId}
+            />
 
             {/* Table Section */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
@@ -239,11 +253,12 @@ export default function SellerProducts() {
                                         <td className="p-4 align-middle">
                                             <div className="flex items-center justify-center gap-2">
                                                 <button
-                                                    onClick={() =>
-                                                        navigate(
-                                                            `/seller/products/edit/${product.product_id}`
-                                                        )
-                                                    }
+                                                    onClick={() => {
+                                                        setEditingProductId(
+                                                            product.product_id
+                                                        );
+                                                        setIsModalOpen(true);
+                                                    }}
                                                     className="p-1.5 text-yellow-600 hover:bg-yellow-50 rounded transition-colors border border-transparent hover:border-yellow-200"
                                                     title="Edit"
                                                 >
