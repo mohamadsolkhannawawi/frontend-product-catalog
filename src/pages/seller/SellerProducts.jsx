@@ -50,7 +50,7 @@ export default function SellerProducts() {
         if (!confirm("Apakah Anda yakin ingin menghapus produk ini?")) return;
         setDeletingId(id);
         try {
-            await api.delete(`/products/${id}`);
+            await api.delete(`/dashboard/seller/products/${id}`);
             setProducts(products.filter((p) => p.product_id !== id));
             toast.success("Produk berhasil dihapus");
         } catch (error) {
@@ -170,7 +170,7 @@ export default function SellerProducts() {
                             <thead>
                                 <tr className="bg-gray-50 border-b border-gray-100 text-xs uppercase text-gray-500 font-semibold tracking-wider">
                                     <th className="p-4 w-16">No</th>
-                                    <th className="p-4">Info Produk</th>
+                                    <th className="p-4">Nama Produk</th>
                                     <th className="p-4">Kategori</th>
                                     <th className="p-4">Harga</th>
                                     <th className="p-4">Stok</th>
@@ -190,36 +190,10 @@ export default function SellerProducts() {
                                                 1}
                                         </td>
 
-                                        {/* Info Produk */}
+                                        {/* Nama Produk */}
                                         <td className="p-4 align-middle">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden shrink-0">
-                                                    {product.images &&
-                                                    product.images[0] ? (
-                                                        <img
-                                                            src={
-                                                                product
-                                                                    .images[0]
-                                                                    .image_url
-                                                            }
-                                                            alt={product.name}
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    ) : (
-                                                        <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                                            <Package className="w-5 h-5" />
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <div className="font-bold text-gray-800 text-sm line-clamp-1">
-                                                        {product.name}
-                                                    </div>
-                                                    <div className="text-xs text-gray-500 line-clamp-1 max-w-[200px] mt-0.5">
-                                                        {product.description ||
-                                                            "Tidak ada deskripsi"}
-                                                    </div>
-                                                </div>
+                                            <div className="font-semibold text-gray-800 text-sm">
+                                                {product.name}
                                             </div>
                                         </td>
 
