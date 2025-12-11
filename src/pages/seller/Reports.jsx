@@ -27,7 +27,7 @@ export default function SellerReports() {
             switch (reportType) {
                 case "sales":
                     endpoint = "/dashboard/seller/reports/sales";
-                    filename = "Laporan_Penjualan.pdf";
+                    filename = "Laporan_Produk_Segera_Dipesan.pdf";
                     break;
                 case "stock":
                     endpoint = "/dashboard/seller/reports/stock";
@@ -35,7 +35,7 @@ export default function SellerReports() {
                     break;
                 case "reviews":
                     endpoint = "/dashboard/seller/reports/reviews";
-                    filename = "Laporan_Ulasan_Produk.pdf";
+                    filename = "Laporan_Produk_Berdasarkan_Rating.pdf";
                     break;
                 default:
                     return;
@@ -68,9 +68,9 @@ export default function SellerReports() {
     const reports = [
         {
             key: "sales",
-            title: "Laporan Penjualan",
+            title: "Laporan Daftar Produk Segera Dipesan",
             description:
-                "Rekapitulasi transaksi penjualan yang berhasil, termasuk pendapatan dan status pesanan.",
+                "Daftar produk dengan stok kurang dari 2 unit yang perlu segera dipesan ulang. Diurutkan berdasarkan kategori dan nama produk.",
             icon: <ShoppingBag className="w-6 h-6 text-blue-600" />,
             iconBg: "bg-blue-100",
         },
@@ -84,9 +84,9 @@ export default function SellerReports() {
         },
         {
             key: "reviews",
-            title: "Laporan Ulasan & Rating",
+            title: "Laporan Daftar Produk Berdasarkan Rating",
             description:
-                "Daftar ulasan pelanggan beserta rating untuk mengevaluasi kepuasan pembeli.",
+                "Daftar produk berdasarkan rating tertinggi dari pelanggan. Menampilkan nama produk, kategori, harga, stok, dan rating rata-rata.",
             icon: <Star className="w-6 h-6 text-yellow-600" />,
             iconBg: "bg-yellow-100",
         },
