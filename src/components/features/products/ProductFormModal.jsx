@@ -38,6 +38,19 @@ export default function ProductFormModal({
             fetchCategories();
             if (isEdit) {
                 fetchProduct();
+            } else {
+                // Reset form when opening for new product
+                setFormData({
+                    name: "",
+                    description: "",
+                    price: "",
+                    stock: "",
+                    category_id: "",
+                    status: "draft",
+                });
+                setExistingImages([]);
+                setNewImages([]);
+                setImagePreviews([]);
             }
         }
     }, [isOpen, productId]);
@@ -139,7 +152,7 @@ export default function ProductFormModal({
             });
 
             if (isEdit) {
-                await api.post(API_ENDPOINTS.SELLER_PRODUCT(productId), data, {
+                await api.put(API_ENDPOINTS.SELLER_PRODUCT(productId), data, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
                 toast.success("Produk berhasil diperbarui");
@@ -150,7 +163,7 @@ export default function ProductFormModal({
                 toast.success("Produk berhasil ditambahkan");
             }
             onSuccess?.();
-            onClose();
+            handleClose();
         } catch (error) {
             console.error(error);
             const msg =
@@ -169,6 +182,28 @@ export default function ProductFormModal({
     };
 
     if (!isOpen) return null;
+
+    const handleClose = () => {
+        // Clean up image previews
+        imagePreviews.forEach((url) => {
+            try {
+                URL.revokeObjectURL(url);
+            } catch (e) {}
+        });
+        // Reset state
+        setFormData({
+            name: "",
+            description: "",
+            price: "",
+            stock: "",
+            category_id: "",
+            status: "draft",
+        });
+        setExistingImages([]);
+        setNewImages([]);
+        setImagePreviews([]);
+        onClose();
+    };
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -192,7 +227,7 @@ export default function ProductFormModal({
                         </p>
                     </div>
                     <button
-                        onClick={onClose}
+                        onClick={handleClose}
                         className="p-2 rounded-lg bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
                     >
                         <X className="w-6 h-6" />
