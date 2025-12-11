@@ -3,13 +3,19 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ProductGrid from "@/components/features/products/ProductGrid";
+import ImageCarousel from "@/components/common/ImageCarousel";
 import api from "@/lib/axios";
 import { API_ENDPOINTS } from "@/lib/constants";
 import Loader from "@/components/common/Loader";
 
 import * as Icons from "lucide-react";
 
-// category labels come directly from backend
+// Hero section images - dynamically loaded
+const heroImages = [
+    new URL("@/assets/images/hero-section/hero-1.png", import.meta.url).href,
+    new URL("@/assets/images/hero-section/hero-2.png", import.meta.url).href,
+    new URL("@/assets/images/hero-section/hero-3.png", import.meta.url).href,
+];
 
 export default function Home() {
     const [products, setProducts] = useState([]);
@@ -60,33 +66,38 @@ export default function Home() {
             {/* MAIN CONTENT */}
             <main className="max-w-7xl mx-auto px-6 flex-1">
                 {/* HERO SECTION */}
-                <section className="pt-16 pb-20 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                    <div>
-                        <h1 className="text-5xl font-bold text-brand-black leading-tight">
-                            Platform Katalog
-                            <br />
-                            Edukatif
-                        </h1>
+                <section className="pt-16 pb-20">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                        {/* Left Side - Text Content */}
+                        <div>
+                            <h1 className="text-5xl font-bold text-brand-black leading-tight">
+                                Platform Katalog
+                                <br />
+                                Edukatif
+                            </h1>
 
-                        <p className="mt-6 text-lg text-brand-gray-600 leading-relaxed max-w-xl">
-                            Desain profesional, cari produk terbaik dari toko
-                            lokal Indonesia dengan mudah dan terpercaya.
-                        </p>
+                            <p className="mt-6 text-lg text-brand-gray-600 leading-relaxed max-w-xl">
+                                Desain profesional, cari produk terbaik dari
+                                toko lokal Indonesia dengan mudah dan
+                                terpercaya.
+                            </p>
 
-                        <a
-                            href="/catalog"
-                            className="inline-block mt-8 bg-brand-purple text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-purple-700 transition"
-                        >
-                            Jelajahi Produk
-                        </a>
-                    </div>
+                            <a
+                                href="/catalog"
+                                className="inline-block mt-8 bg-brand-purple text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-purple-700 transition"
+                            >
+                                Jelajahi Produk
+                            </a>
+                        </div>
 
-                    <div className="flex justify-center">
-                        <img
-                            src="/src/assets/images/broken-photo.png"
-                            alt="Hero"
-                            className="w-full max-w-xl rounded-lg"
-                        />
+                        {/* Right Side - Image Carousel */}
+                        <div className="flex justify-center">
+                            <ImageCarousel
+                                images={heroImages}
+                                autoSlide={true}
+                                interval={5000}
+                            />
+                        </div>
                     </div>
                 </section>
 
