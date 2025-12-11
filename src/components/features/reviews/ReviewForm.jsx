@@ -11,7 +11,11 @@ import { API_ENDPOINTS } from "@/lib/constants";
 const schema = z.object({
     name: z.string().min(1, "Nama wajib diisi").max(100),
     email: z.string().email("Email tidak valid"),
-    phone: z.string().min(1, "Nomor telepon wajib diisi").max(32),
+    phone: z
+        .string()
+        .regex(/^[0-9]+$/, "Nomor telepon hanya boleh berisi angka")
+        .min(1, "Nomor telepon wajib diisi")
+        .max(32),
     province_id: z.string().min(1, "Provinsi wajib dipilih"),
     rating: z.number().min(1).max(5).default(5),
     comment: z.string().max(500).optional(),
@@ -93,6 +97,8 @@ export default function ReviewForm({ productId, onSuccess }) {
                         {...register("phone")}
                         placeholder="Nomor Telepon"
                         type="tel"
+                        pattern="[0-9]*"
+                        inputMode="numeric"
                         className="input-field"
                     />
                     {errors.phone && (
