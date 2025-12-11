@@ -151,6 +151,36 @@ export default function ProductDetail() {
                                 </span>
                             </div>
 
+                            {/* Status Badge */}
+                            {product.status && (
+                                <div>
+                                    <span
+                                        className={`inline-block text-sm font-semibold px-3 py-1 rounded-full ${
+                                            product.status === "active"
+                                                ? "bg-green-100 text-green-800"
+                                                : product.status === "draft"
+                                                ? "bg-gray-100 text-gray-800"
+                                                : product.status === "inactive"
+                                                ? "bg-yellow-100 text-yellow-800"
+                                                : product.status ===
+                                                  "discontinued"
+                                                ? "bg-red-100 text-red-800"
+                                                : "bg-gray-100 text-gray-800"
+                                        }`}
+                                    >
+                                        {product.status === "active"
+                                            ? "✓ Aktif"
+                                            : product.status === "draft"
+                                            ? "Draft"
+                                            : product.status === "inactive"
+                                            ? "Tidak Aktif"
+                                            : product.status === "discontinued"
+                                            ? "Dihentikan"
+                                            : product.status}
+                                    </span>
+                                </div>
+                            )}
+
                             {/* Description */}
                             <div>
                                 <h2 className="text-2xl font-bold text-gray-900 mb-3">
