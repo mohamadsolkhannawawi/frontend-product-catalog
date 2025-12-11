@@ -17,6 +17,7 @@ import AdminDashboard from "@/pages/admin/AdminDashboard";
 import SellerProducts from "@/pages/seller/SellerProducts";
 import ProductForm from "@/pages/seller/ProductForm";
 import ScrollToTop from "@/components/ScrollToTop";
+import { FeedbackUIKit } from "@/components/ui/FeedbackUIKit";
 
 export default function AppRoutes() {
     return (
@@ -74,6 +75,9 @@ export default function AppRoutes() {
                     path="/admin/dashboard/reports"
                     element={<AdminDashboard initialActive="reports" />}
                 />
+
+                {/* UI Kit Route (Development) */}
+                <Route path="/ui-kit" element={<FeedbackUIKit />} />
 
                 <Route path="*" element={<Home />} />
             </Routes>
