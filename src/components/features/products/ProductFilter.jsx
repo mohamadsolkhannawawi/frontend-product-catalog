@@ -230,7 +230,16 @@ export default function ProductFilter({ initial = {}, onApply, onReset }) {
                     className="input-field mt-1"
                     placeholder="Contoh: 50000"
                     value={filters.min_price}
-                    onChange={(e) => change("min_price", e.target.value)}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        // Ensure non-negative values
+                        const numValue =
+                            value === ""
+                                ? ""
+                                : Math.max(0, parseInt(value) || 0);
+                        change("min_price", numValue.toString());
+                    }}
+                    min="0"
                 />
             </div>
 
@@ -241,7 +250,16 @@ export default function ProductFilter({ initial = {}, onApply, onReset }) {
                     className="input-field mt-1"
                     placeholder="Contoh: 500000"
                     value={filters.max_price}
-                    onChange={(e) => change("max_price", e.target.value)}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        // Ensure non-negative values
+                        const numValue =
+                            value === ""
+                                ? ""
+                                : Math.max(0, parseInt(value) || 0);
+                        change("max_price", numValue.toString());
+                    }}
+                    min="0"
                 />
             </div>
 
