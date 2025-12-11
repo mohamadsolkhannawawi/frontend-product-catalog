@@ -45,19 +45,73 @@ export default function ProductFilter({ initial = {}, onApply, onReset }) {
         return () => (mounted = false);
     }, []);
 
+    // Handle hierarchical changes: reset child levels when parent changes
     useEffect(() => {
-        if (filters.province) loadCities(filters.province);
+        if (filters.province) {
+            loadCities(filters.province);
+        } else {
+            // Reset city, district, village when province is cleared
+            setFilters((s) => ({
+                ...s,
+                city: "",
+                district: "",
+                village: "",
+            }));
+        }
     }, [filters.province, loadCities]);
 
     useEffect(() => {
-        if (filters.city) loadDistricts(filters.city);
+        if (filters.city) {
+            loadDistricts(filters.city);
+        } else {
+            // Reset district, village when city is cleared
+            setFilters((s) => ({
+                ...s,
+                district: "",
+                village: "",
+            }));
+        }
     }, [filters.city, loadDistricts]);
 
     useEffect(() => {
-        if (filters.district) loadVillages(filters.district);
+        if (filters.district) {
+            loadVillages(filters.district);
+        } else {
+            // Reset village when district is cleared
+            setFilters((s) => ({
+                ...s,
+                village: "",
+            }));
+        }
     }, [filters.district, loadVillages]);
 
-    const change = (k, v) => setFilters((s) => ({ ...s, [k]: v }));
+    const change = (k, v) => {
+        // If changing a parent level, reset all child levels
+        if (k === "province" && v !== filters.province) {
+            setFilters((s) => ({
+                ...s,
+                province: v,
+                city: "",
+                district: "",
+                village: "",
+            }));
+        } else if (k === "city" && v !== filters.city) {
+            setFilters((s) => ({
+                ...s,
+                city: v,
+                district: "",
+                village: "",
+            }));
+        } else if (k === "district" && v !== filters.district) {
+            setFilters((s) => ({
+                ...s,
+                district: v,
+                village: "",
+            }));
+        } else {
+            setFilters((s) => ({ ...s, [k]: v }));
+        }
+    };
 
     const apply = (e) => {
         e?.preventDefault();
@@ -105,9 +159,10 @@ export default function ProductFilter({ initial = {}, onApply, onReset }) {
             <div>
                 <label className="text-sm">Kota/Kabupaten</label>
                 <select
-                    className="input-field mt-1"
+                    className="input-field mt-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     value={filters.city}
                     onChange={(e) => change("city", e.target.value)}
+                    disabled={!filters.province}
                 >
                     <option value="">Semua Kota</option>
                     {cities.map((c) => (
@@ -121,9 +176,10 @@ export default function ProductFilter({ initial = {}, onApply, onReset }) {
             <div>
                 <label className="text-sm">Kecamatan</label>
                 <select
-                    className="input-field mt-1"
+                    className="input-field mt-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     value={filters.district}
                     onChange={(e) => change("district", e.target.value)}
+                    disabled={!filters.city}
                 >
                     <option value="">Semua Kecamatan</option>
                     {districts.map((d) => (
@@ -137,9 +193,10 @@ export default function ProductFilter({ initial = {}, onApply, onReset }) {
             <div>
                 <label className="text-sm">Desa/Kelurahan</label>
                 <select
-                    className="input-field mt-1"
+                    className="input-field mt-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     value={filters.village}
                     onChange={(e) => change("village", e.target.value)}
+                    disabled={!filters.district}
                 >
                     <option value="">Semua Kelurahan</option>
                     {villages.map((v) => (

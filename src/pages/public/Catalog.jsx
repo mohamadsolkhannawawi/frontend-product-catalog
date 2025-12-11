@@ -74,10 +74,38 @@ export default function Catalog() {
         if (filters.min_price) next.min_price = filters.min_price;
         if (filters.max_price) next.max_price = filters.max_price;
         if (filters.sort) next.sort = filters.sort;
-        if (filters.province) next.province_id = filters.province;
-        if (filters.city) next.city_id = filters.city;
-        if (filters.district) next.district_id = filters.district;
-        if (filters.village) next.village_id = filters.village;
+
+        // Hierarchical location filters with automatic reset
+        if (filters.province) {
+            next.province_id = filters.province;
+        } else {
+            delete next.province_id;
+            delete next.city_id;
+            delete next.district_id;
+            delete next.village_id;
+        }
+
+        if (filters.city) {
+            next.city_id = filters.city;
+        } else {
+            delete next.city_id;
+            delete next.district_id;
+            delete next.village_id;
+        }
+
+        if (filters.district) {
+            next.district_id = filters.district;
+        } else {
+            delete next.district_id;
+            delete next.village_id;
+        }
+
+        if (filters.village) {
+            next.village_id = filters.village;
+        } else {
+            delete next.village_id;
+        }
+
         setSearchParams(next);
     }
 
