@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import api from "@/lib/axios";
 import { Ban, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
-import toast from "react-hot-toast";
+import { useFeedback } from "@/context/FeedbackContext";
 import Loader, { BarsSpinner } from "@/components/common/Loader";
 
 export default function AdminManagement() {
+    const { showConfirmation, success, error } = useFeedback();
     const [sellers, setSellers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState("all"); // all, active, inactive
@@ -24,39 +25,54 @@ export default function AdminManagement() {
             const response = await api.get("/dashboard/admin/sellers");
             const data = response.data.data || response.data || [];
             setSellers(data);
-        } catch (error) {
-            console.error("Failed to fetch sellers:", error);
-            toast.error("Gagal memuat data seller");
+        } catch (err) {
+            console.error("Failed to fetch sellers:", err);
+            error("Gagal memuat data seller");
         } finally {
             setLoading(false);
         }
     };
 
     const toggleSellerStatus = async (sellerId, currentStatus) => {
-        const action = currentStatus ? "menonaktifkan" : "mengaktifkan";
-        if (!confirm(`Apakah Anda yakin ingin ${action} toko ini?`)) return;
-        setActionLoading(true);
-        try {
-            await api.patch(
-                `/dashboard/admin/sellers/${sellerId}/toggle-status`
-            );
+        const isActive = currentStatus;
+        showConfirmation({
+            title: isActive ? "Nonaktifkan Penjual?" : "Aktifkan Penjual?",
+            message: isActive
+                ? "Toko ini tidak akan bisa diakses oleh pembeli."
+                : "Toko ini akan dapat diakses kembali oleh pembeli.",
+            confirmText: isActive ? "Nonaktifkan" : "Aktifkan",
+            isDangerous: isActive,
+            onConfirm: async () => {
+                setActionLoading(true);
+                try {
+                    await api.patch(
+                        `/dashboard/admin/sellers/${sellerId}/toggle-status`
+                    );
 
-            // Update local state optimistically
-            setSellers((prev) =>
-                prev.map((s) =>
-                    s.seller_id === sellerId
-                        ? { ...s, is_active: !currentStatus }
-                        : s
-                )
-            );
-
-            toast.success(`Berhasil ${action} toko`);
-        } catch (error) {
-            console.error("Failed to toggle seller status:", error);
-            toast.error("Gagal mengubah status");
-        } finally {
-            setActionLoading(false);
-        }
+                    // Update local state optimistically
+                    setSellers((prev) =>
+                        prev.map((s) =>
+                            s.seller_id === sellerId
+                                ? { ...s, is_active: !currentStatus }
+                                : s
+                        )
+                    );
+                    success(
+                        isActive
+                            ? "Penjual berhasil dinonaktifkan"
+                            : "Penjual berhasil diaktifkan"
+                    );
+                } catch (err) {
+                    error(
+                        isActive
+                            ? "Gagal menonaktifkan penjual"
+                            : "Gagal mengaktifkan penjual"
+                    );
+                } finally {
+                    setActionLoading(false);
+                }
+            },
+        });
     };
 
     // --- Filtering Logic ---
