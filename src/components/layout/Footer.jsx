@@ -1,8 +1,25 @@
 import { Link } from "react-router-dom";
 import { Instagram, Twitter, Mail } from "lucide-react";
+import { useEffect, useState } from "react";
+import api from "@/lib/axios";
+import { API_ENDPOINTS } from "@/lib/constants";
 
 const Footer = () => {
     const year = new Date().getFullYear();
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const res = await api.get(API_ENDPOINTS.CATEGORIES);
+                const cats = res.data.data || res.data || [];
+                setCategories(cats);
+            } catch (e) {
+                console.error("Failed to load categories for footer");
+            }
+        };
+        fetchCategories();
+    }, []);
     return (
         <footer
             style={{ background: "#2b2c40" }}
@@ -48,22 +65,16 @@ const Footer = () => {
                                     Katalog
                                 </Link>
                             </li>
-                            <li>
-                                <Link
-                                    to="/catalog?category=fashion"
-                                    className="hover:text-purple-300"
-                                >
-                                    Fashion
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    to="/catalog?category=electronics"
-                                    className="hover:text-purple-300"
-                                >
-                                    Elektronik
-                                </Link>
-                            </li>
+                            {categories.slice(0, 2).map((cat) => (
+                                <li key={cat.category_id}>
+                                    <Link
+                                        to={`/catalog?category_slug=${cat.slug}`}
+                                        className="hover:text-purple-300"
+                                    >
+                                        {cat.name}
+                                    </Link>
+                                </li>
+                            ))}
                             <li>
                                 <Link
                                     to="/catalog?sort=top"
