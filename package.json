@@ -20,7 +20,7 @@
         "react-hot-toast": "^2.6.0",
         "react-is": "^19.2.1",
         "react-lazy-load-image-component": "^1.6.3",
-        "react-loader-spinner": "^5.3.4",
+        "react-loader-spinner": "^8.0.0",
         "react-router-dom": "^7.9.6",
         "recharts": "^3.5.0",
         "zod": "^4.1.12"
